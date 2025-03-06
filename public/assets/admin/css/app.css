@@ -1938,8 +1938,7 @@ a {
 }
 
 .bg--dark {
-    /* background-color: #071251 !important; */
-    background-color: #3B2A1A !important;
+    background-color: #000!important;
 }
 
 .bg--white {
@@ -5830,8 +5829,7 @@ th.w-85 {
 
 .sidebar__menu .sidebar-menu-item .side-menu--open,
 .sidebar__menu .sidebar-menu-item.active>a {
-    /* background-color: #4634ff !important; */
-    background-color: #767676 !important;
+    background-color: #d5a606!important;
 }
 
 .sidebar__menu .menu-icon {

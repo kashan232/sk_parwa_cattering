@@ -21,12 +21,18 @@
             justify-content: center;
             padding: 0 20px;
             background: #ddd;
-            background: url('assets/admin/images/background4.jpg');
+            background: url('assets/admin/images/background.jpg');
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
         }
-
+        body::before {
+            content: '';
+            width: 100%;
+            height: 100%;
+            background: #0000006e;
+            position: absolute;
+        }
         .wrapper {
 
 
@@ -54,7 +60,7 @@
             height: 3px;
             width: 48px;
             border-radius: 12px;
-            background: #160F54;
+            background: #dbb418;
         }
 
         .wrapper form {
@@ -97,7 +103,7 @@
 
         .input-box input:focus,
         .input-box input:valid {
-            border-color: #160F54;
+            border-color: #dbb418;
         }
 
         form .policy {
@@ -116,12 +122,12 @@
             color: #fff;
             letter-spacing: 1px;
             border: none;
-            background: #160F54;
+            background: #dbb418;
             cursor: pointer;
         }
 
         .input-box.button input:hover {
-            background: #160F54;
+            background: #dbb418;
         }
 
         form .text h3 {
@@ -155,7 +161,7 @@
     </style> 
     <div class="wrapper">
         <div style="width:100%; text-align:center;">
-            <img src="assets/admin/images/login_logo.png" alt="image">
+            <img src="assets/admin/images/logo.png" alt="image" style="width: 150px; background:#000;border-radius:100px;">
         </div>
         <!-- <h2>Admin Login</h2> -->
         <form method="POST" action="{{ route('login') }}">

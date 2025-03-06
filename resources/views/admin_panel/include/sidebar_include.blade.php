@@ -3,7 +3,7 @@
     <div class="sidebar__inner">
         <div class="sidebar__logo">
             <a href="#" class="sidebar__main-logo">
-                <img src="{{ asset('assets\images\logo.jpg') }}" alt="image">
+                <img src="{{ asset('assets\images\logo.jpg') }}" alt="image" style="width: 80px; height:auto; background:#000;border-radius:100px;">
             </a>
         </div>
         <div class="sidebar__menu-wrapper" id="sidebar__menuWrapper">
@@ -83,6 +83,13 @@
                     </div>
                 </li>
 
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('customer') }}" class="nav-link">
+                        <i class="menu-icon la la-users"></i>
+                        <span class="menu-title">Customer</span>
+                    </a>
+                </li>
+                
                 <li class="sidebar-menu-item ">
                     <a href="{{ route('all-order') }}" class="nav-link ">
                         <i class="menu-icon la la-warehouse"></i>
@@ -175,12 +182,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-item">
-                    <a href="{{ route('customer') }}" class="nav-link">
-                        <i class="menu-icon la la-users"></i>
-                        <span class="menu-title">Customer</span>
-                    </a>
-                </li>
+               
 
                 <li class="sidebar-menu-item">
                     <a href="{{ route('customer-recovires') }}" class="nav-link">

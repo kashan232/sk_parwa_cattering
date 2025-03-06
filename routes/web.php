@@ -80,18 +80,18 @@ Route::post('/store-product', [ProductController::class, 'store_product'])->name
 Route::get('/edit-product/{id}', [ProductController::class, 'edit_product'])->middleware(['auth','admin'])->name('edit-product');
 Route::post('/update-product/{id}', [ProductController::class, 'update_product'])->name('update-product');
 Route::get('/product-alerts', [ProductController::class, 'product_alerts'])->name('product-alerts');
-Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories']);
-
+Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories'])->name('get.subcategories');
+Route::get('/get-items/{category}/{subcategory}', [ProductController::class, 'getItems'])->name('get.items');
 //Order
 Route::get('/all-order', [OrderController::class, 'all_order'])->middleware(['auth','admin'])->name('all-order');
 Route::get('/add-order', [OrderController::class, 'add_order'])->middleware(['auth','admin'])->name('add-order');
+Route::post('/store-order', [OrderController::class, 'store_order'])->name('store-order');
 // Route::post('/store-product', [ProductController::class, 'store_product'])->name('store-product');
 // Route::get('/edit-product/{id}', [ProductController::class, 'edit_product'])->middleware(['auth','admin'])->name('edit-product');
 // Route::post('/update-product/{id}', [ProductController::class, 'update_product'])->name('update-product');
 // Route::get('/product-alerts', [ProductController::class, 'product_alerts'])->name('product-alerts');
 // Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories']);
 // Order Items
-Route::get('/all-order-items{id}', [OrderController::class, 'all_order_item'])->middleware(['auth','admin'])->name('all-order-item');
 
 //warehouse
 Route::get('/warehouse', [WarehouseController::class, 'warehouse'])->middleware(['auth','admin'])->name('warehouse');

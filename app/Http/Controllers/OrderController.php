@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
@@ -31,37 +32,29 @@ class OrderController extends Controller
 
     public function add_order()
     {
-
-        dd("Ad");
         if (Auth::id()) {
             $userId = Auth::id();
             // $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
             $all_product = Product::get();
-            $all_customer = Customer::get();
-
+            $Customers = Customer::get();
+            $Category = Category::get();
             
-            return view('admin_panel\order\all_order',compact('all_product', 'all_customer'));
+            return view('admin_panel\order\add_order',compact('all_product', 'Customers','Category'));
         } else {
             return redirect()->back();
         }
     }
 
-    public function all_order_item()
+    public function store_order(Request $request)
     {
-
-        // dd("Aad");
         if (Auth::id()) {
             $userId = Auth::id();
-            // $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
-            $order_items = OrderItem::with('product')->get();
-            // dd($order_items->toArray());
-            
-            return view('admin_panel\order\all_order_items',compact('order_items'));
+            dd($request);
+
+
         } else {
             return redirect()->back();
         }
     }
-
-
 
 }

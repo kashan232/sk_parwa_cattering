@@ -48,45 +48,60 @@ class ProductController extends Controller
 
     public function getSubcategories($category)
     {
-        $subcategories = SubCategory::where('category_id', $category)->first();
-        // dd($subcategories);
-
-        return response()->json($subcategories); // Return JSON response
+        $subcategories = SubCategory::where('category_id', $category)->get();
+        return response()->json($subcategories);
     }
-    
+    public function getItems($category, $subcategory)
+    {
+        $items = Product::where('category_id', $category)
+            ->where('subcategory_id', $subcategory)
+            ->with('unit:id,unit') // Yeh ensure karega ke sirf unit ka name aaye
+            ->get(['id', 'name', 'unit_id', 'price']);
+
+        // Data modify karke response bhejna
+        $items = $items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'unit' => $item->unit ? $item->unit->unit : '', // Agar unit available hai toh name le lo
+                'price' => $item->price,
+            ];
+        });
+
+        return response()->json($items);
+    }
+
+
+
     public function store_product(Request $request)
     {
-        // dd($request->toArray());
-        if (Auth::id()) {
-            $usertype = Auth()->user()->usertype;
+        if (Auth::check()) {
             $userId = Auth::id();
 
-            // Handle image upload if the image is provided
-            $imageName = null;  // Default to null if no image is uploaded
+            // Handle image upload if provided
+            $imageName = null;
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $imagePath = 'product_images/' . $imageName;
-
-                // Save the original image to the public directory
                 $image->move(public_path('product_images'), $imageName);
             }
 
-            // Create the product with or without the image
+            // Create product
             Product::create([
-                'name'     => $request->product_name,
-                'category_id'         => $request->category,
-                'subcategory_id'         => $request->sub_category,
-                'unit_id'         => $request->unit,
-                'price'            => $request->price,
-                'image'            => $imageName,
+                'name'          => $request->product_name,
+                'category_id'   => $request->category,
+                'subcategory_id' => $request->sub_category,
+                'unit_id'       => $request->unit,
+                'price'         => $request->price,
+                'image'         => $imageName, // This will be null if no image is uploaded
             ]);
 
             return redirect()->back()->with('success', 'Product Added Successfully');
-        } else {
-            return redirect()->back();
         }
+
+        return redirect()->back();
     }
+
     public function edit_product($id)
     {
         if (Auth::id()) {

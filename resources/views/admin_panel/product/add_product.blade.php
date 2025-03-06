@@ -72,7 +72,7 @@
                                                     <div class="form-group">
                                                         <div class="form-group" id="category-wrapper">
                                                             <label class="form-label">Category</label>
-                                                            <select name="category" class="select2-basic form-control" id="categorySub" onchange="ll()" required>
+                                                            <select name="category" class=" form-control" id="categorySub" onchange="ll()" required>
                                                                 <option value="" selected disabled>Select One</option>
                                                                 @foreach($all_category as $category)
                                                                 <option value="{{ $category->id }}">
@@ -176,44 +176,23 @@
         </div><!-- body-wrapper end -->
     </div>
     @include('admin_panel.include.footer_include')
-
     <script>
-        // Barcode input field ko target kar rahe hain
-        const barcodeInput = document.getElementById('barcodeInput');
+        $(document).ready(function() {
+            $('#categorySub').change(function() {
+                var category_id = $(this).val();
+                var url = "{{ route('get.subcategories', ':id') }}".replace(':id', category_id);
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#subCategorySub').empty().append('<option value="" selected disabled>Select Sub Category</option>');
 
-        // Event listener jab barcode scanner se koi value aaye
-        barcodeInput.addEventListener('input', function(event) {
-            const barcodeValue = event.target.value;
-
-            // Jab barcode ki length sufficient ho (tumhare barcode ki length pe depend karega)
-            if (barcodeValue.length >= 6) { // 6 ko tum adjust kar sakte ho barcode length ke hisaab se
-                console.log("Barcode scanned: " + barcodeValue);
-
-                // Tum yahan koi additional action bhi kar sakte ho
-                // Jaise form submit ya barcode ko validate karna
-            }
+                        $.each(data, function(key, value) {
+                            $('#subCategorySub').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    }
+                });
+            });
         });
-        
-
-            function ll() {
-                let category_val = $("#categorySub").val();
-                alert("Selected Value: " + category_val); // Show the value in an alert
-
-                if (category_val) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '/get-subcategories/' + category_val,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function (response) {
-                            // $('#subCategorySub').empty().append('<option value="" selected disabled>Select a Subcategory</option>');
-                            // console.log(response.name);
-                            
-                                $('#subCategorySub').html('<option value="' + response.id + '">' + response.name + '</option>');
-                        }
-                    });
-                }
-            }
     </script>
