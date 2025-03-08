@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
-    <title>RESTINA - Food & Restaurant HTML Template With RTL</title>
+    <title>SK PARWA</title>
     <link rel="icon" type="image/png" href="order_page/assets/images/favicon.png">
     <link rel="stylesheet" href="order_page/assets/css/all.min.css">
     <link rel="stylesheet" href="order_page/assets/css/bootstrap.min.css">
@@ -22,6 +23,11 @@
     <link rel="stylesheet" href="order_page/assets/css/animated_barfiller.css">
     <link rel="stylesheet" href="order_page/assets/css/style.css">
     <link rel="stylesheet" href="order_page/assets/css/responsive.css">
+    <style>
+        .btn-close {
+            filter: invert(1);
+        }
+    </style>
 </head>
 
 <body>
@@ -67,8 +73,8 @@
         <div class="container">
             <div class="row wow fadeInUp">
                 <div class="col-12">
-                    <div class="breadcrumb_text">
-                        <h1>Online Order</h1>
+                    <div class="breadcrumb_text text-center">
+                        <h1>Welcome To SK Parwa <br> Online Order</h1>
                     </div>
                 </div>
             </div>
@@ -90,49 +96,43 @@
                         <div class="sidebar_wizard sidebar_category mt_25">
                             <h2>Categories</h2>
                             <ul>
-                                <li><a href='menu_03.html'>Food <span>(04)</span></a></li>
-                                <li><a href='menu_03.html'>Drinks <span>(02)</span></a></li>
-                                <li><a href='menu_03.html'>Burger <span>(09)</span></a></li>
-                                <li><a href='menu_03.html'>Chicken <span>(14)</span></a></li>
-                                <li><a href='menu_03.html'>Pizza <span>(05)</span></a></li>
-                                <li><a href='menu_03.html'>Combo <span>(07)</span></a></li>
+                                @foreach($all_categories as $category)
+                                <li>
+                                    <a href="#">
+                                        {{ $category->category }} <span>({{ $category->products_count }})</span>
+                                    </a>
+                                </li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-9 col-lg-8 order-lg-2">
                     <div class="row">
+                        @foreach($products as $product)
                         <div class="col-xl-4 col-sm-6 wow fadeInUp">
                             <div class="single_menu">
                                 <div class="single_menu_img">
-                                    <img src="order_page/assets/images/menu_img_1.jpg" alt="menu" class="img-fluid w-100">
-                                    <ul>
-                                        <li><a href="#"><i class="far fa-eye"></i></a></li>
-                                        <li><a href="#"><i class="far fa-heart"></i></a></li>
-                                    </ul>
+                                    <img src="order_page/assets/images/menu_img_2.jpg" alt="menu" class="img-fluid w-100">
                                 </div>
                                 <div class="single_menu_text">
-                                    <p class="rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </p>
-                                    <a class="category" href="#">Chicken</a>
-                                    <a class='title' href='menu_details.html'>Daria Shevtsova</a>
-                                    <p class="descrption">Homemade pizza crust, pizza sauce</p>
+                                    <a class="category" href="#">{{ $product->category->category }}</a>
+                                    <a class="title" href="#">
+                                        {{ $product->name }} <span class="unit">({{ $product->unit->unit }})</span>
+                                        <br> <span class="text-danger">{{ $product->subcategory->name ?? '' }} </span>
+                                    </a>
+                                    <p class="descrption">{{ $product->description }}</p>
                                     <div class="d-flex flex-wrap align-items-center">
-                                        <a class="add_to_cart" href="#" data-bs-toggle="modal"
-                                            data-bs-target="#cartModal">Add To Cart</a>
-                                        <h3>$40 <del>$50</del></h3>
+                                        <a class="add_to_cart btn btn-danger text-white" href="#" data-bs-toggle="modal" data-bs-target="#cartModal">Order Now</a>
+                                        <h3>Pkr:{{ $product->price }}</h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+                        @endforeach
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -142,7 +142,7 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="footer_info">
                         <a class='footer_logo' href='#'>
-                            <img src="order_page/assets/images/logo.png" alt="RESTINA" >
+                            <img src="order_page/assets/images/logo.png" alt="RESTINA">
                         </a>
                         <p>Cras incident lobotids feudist makes viramas sagittas eu valuta.</p>
                         <ul>
@@ -165,6 +165,94 @@
     <!--==========================
         FOOTER END
     ===========================-->
+    <!-- Order Table Modal -->
+    <!-- Order Now Modal -->
+    <!-- Order Now Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="font-family: 'Poppins', sans-serif;">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title text-white" id="cartModalLabel">Order Summary</h5>
+                    <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close">
+                        ✖
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Order Details -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label">Client Name</label>
+                            <input type="text" class="form-control" placeholder="Enter Client Name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Order Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Order Name</label>
+                            <input type="text" class="form-control" placeholder="Enter Order Name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Program Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Delivery Time</label>
+                            <input type="time" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Venue</label>
+                            <input type="text" class="form-control" placeholder="Enter Venue">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Person Program</label>
+                            <input type="text" class="form-control" placeholder="Enter Person Name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Event Type</label>
+                            <input type="text" class="form-control" placeholder="Enter Event Type">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Special Instructions</label>
+                            <textarea class="form-control" rows="1" placeholder="Enter Special Instructions"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Order Items Table -->
+                    <table class="table table-bordered text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Subcategory</th>
+                                <th>Unit</th>
+                                <th>Price (PKR)</th>
+                                <th style="width: 100px;">Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItems">
+                            <!-- Items will be dynamically added here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Subtotal -->
+                    <div class="text-end mt-3">
+                        <h4><strong>Subtotal: <h1 id="subtotal" class="text-success">PKR 0</h1></strong></h4>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success">Confirm Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
     <!--==========================
@@ -217,5 +305,76 @@
     <!--script/custom js-->
     <script src="order_page/assets/js/script.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let cartItems = document.getElementById("cartItems");
+            let subtotalElement = document.getElementById("subtotal");
+
+            document.querySelectorAll(".add_to_cart").forEach(button => {
+                button.addEventListener("click", function() {
+                    let productCard = this.closest(".single_menu_text");
+                    let itemName = productCard.querySelector(".title").textContent.trim();
+                    let category = productCard.querySelector(".category").textContent.trim();
+                    let subcategory = productCard.querySelector(".text-danger").textContent.trim();
+                    let unit = productCard.querySelector(".unit")?.textContent.trim() || 'N/A';
+                    let price = parseFloat(productCard.querySelector("h3").textContent.replace("Pkr:", "").trim());
+                    let quantity = 1;
+                    let total = price * quantity;
+
+                    let newRow = `
+                    <tr>
+                        <td>${itemName}</td>
+                        <td>${category}</td>
+                        <td>${subcategory}</td>
+                        <td>${unit}</td>
+                        <td>${price}</td>
+                        <td>
+                            <input type="number" class="form-control quantity-input text-center" value="${quantity}" min="1" data-price="${price}" style="width: 70px;">
+                        </td>
+                        <td class="item-total">${total}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm delete-item">X</button>
+                        </td>
+                    </tr>`;
+
+                    cartItems.insertAdjacentHTML("beforeend", newRow);
+                    updateTotals();
+                });
+            });
+
+            // Function to update subtotal
+            function updateTotals() {
+                let subtotal = 0;
+                document.querySelectorAll(".item-total").forEach(cell => {
+                    subtotal += parseFloat(cell.textContent);
+                });
+                subtotalElement.textContent = `PKR ${subtotal.toFixed(2)}`;
+            }
+
+            // Event delegation for quantity change and delete button
+            cartItems.addEventListener("input", function(event) {
+                if (event.target.classList.contains("quantity-input")) {
+                    let quantityInput = event.target;
+                    let price = parseFloat(quantityInput.getAttribute("data-price"));
+                    let quantity = parseInt(quantityInput.value) || 1;
+
+                    let totalCell = quantityInput.closest("tr").querySelector(".item-total");
+                    totalCell.textContent = (price * quantity).toFixed(2);
+
+                    updateTotals();
+                }
+            });
+
+            cartItems.addEventListener("click", function(event) {
+                if (event.target.classList.contains("delete-item")) {
+                    event.target.closest("tr").remove();
+                    updateTotals();
+                }
+            });
+
+        });
+    </script>
+
 </body>
+
 </html>

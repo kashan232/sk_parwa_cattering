@@ -15,6 +15,27 @@ use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
+
+    public function welcome(Request $request)
+    {
+        if (Auth::id()) {
+            $userId = Auth::id();
+
+
+            $products = Product::all(); // Sare products le ayega
+
+            $all_categories = Category::where('admin_or_user_id', '=', $userId)
+                ->get()
+                ->map(function ($category) {
+                    $category->products_count = $category->products()->count();
+                    return $category;
+                });
+            return view('welcome', compact('products','all_categories'));
+        } else {
+            return redirect()->back();
+        }
+    }
+
     public function home()
     {
         if (Auth::id()) {
@@ -31,7 +52,7 @@ class HomeController extends Controller
                 $Warehouses = Warehouse::get();
 
 
-                return view('user_panel.user_dashboard', compact('categories', 'products', 'Customers','Warehouses'));
+                return view('user_panel.user_dashboard', compact('categories', 'products', 'Customers', 'Warehouses'));
             } else if ($usertype == 'admin') {
                 $userId = Auth::id();
                 $totalPurchasesPrice = \App\Models\Purchase::sum('total_price');
@@ -60,7 +81,7 @@ class HomeController extends Controller
 
                 // $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
                 // dd($lowStockProducts);
-                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers','totalsales'));
+                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
             }
         } else {
             return Redirect()->route('login');

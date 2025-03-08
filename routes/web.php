@@ -17,6 +17,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\VendorController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,16 +36,15 @@ use Illuminate\Support\Facades\Route;
 // Old Pos setup
 // Software deployed
 // Checking
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', [HomeController::class, 'welcome']);
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/home', [HomeController::class, 'home'])->middleware(['auth'])->name('home');
-Route::get('/admin-page', [HomeController::class, 'adminpage'])->middleware(['auth','admin'])->name('admin-page');
+Route::get('/admin-page', [HomeController::class, 'adminpage'])->middleware(['auth', 'admin'])->name('admin-page');
 Route::get('/Admin-Change-Password', [HomeController::class, 'Admin_Change_Password'])->name('Admin-Change-Password');
 Route::post('/updte-change-Password', [HomeController::class, 'updte_change_Password'])->name('updte-change-Password');
 
@@ -54,46 +54,46 @@ Route::get('/get-product-by-barcode', [HomeController::class, 'getProductByBarco
 
 
 //category
-Route::get('/category', [CategoryController::class, 'category'])->middleware(['auth','admin'])->name('category');
+Route::get('/category', [CategoryController::class, 'category'])->middleware(['auth', 'admin'])->name('category');
 Route::post('/store-category', [CategoryController::class, 'store_category'])->name('store-category');
 Route::post('/update-category', [CategoryController::class, 'update_category'])->name('update-category');
 
 //Sub category 
-Route::get('/sub-category', [Sub_cat_Cotnroller::class, 'sub_category'])->middleware(['auth','admin'])->name('subcategory');
+Route::get('/sub-category', [Sub_cat_Cotnroller::class, 'sub_category'])->middleware(['auth', 'admin'])->name('subcategory');
 Route::post('/sub-store-category', [Sub_cat_Cotnroller::class, 'store_sub_category'])->name('store-subcategory');
 Route::post('/sub-update-category', [Sub_cat_Cotnroller::class, 'update_sub_category'])->name('update-subcategory');
 
 
 //brand
-Route::get('/brand', [BrandController::class, 'brand'])->middleware(['auth','admin'])->name('brand');
+Route::get('/brand', [BrandController::class, 'brand'])->middleware(['auth', 'admin'])->name('brand');
 Route::post('/store-brand', [BrandController::class, 'store_brand'])->name('store-brand');
 Route::post('/update-brand', [BrandController::class, 'update_brand'])->name('update-brand');
 
 //unit
-Route::get('/unit', [UnitController::class, 'unit'])->middleware(['auth','admin'])->name('unit');
+Route::get('/unit', [UnitController::class, 'unit'])->middleware(['auth', 'admin'])->name('unit');
 Route::post('/store-unit', [UnitController::class, 'store_unit'])->name('store-unit');
 Route::post('/update-unit', [UnitController::class, 'update_unit'])->name('update-unit');
 
 //product
-Route::get('/all-product', [ProductController::class, 'all_product'])->middleware(['auth','admin'])->name('all-product');
-Route::get('/add-product', [ProductController::class, 'add_product'])->middleware(['auth','admin'])->name('add-product');
+Route::get('/all-product', [ProductController::class, 'all_product'])->middleware(['auth', 'admin'])->name('all-product');
+Route::get('/add-product', [ProductController::class, 'add_product'])->middleware(['auth', 'admin'])->name('add-product');
 Route::post('/store-product', [ProductController::class, 'store_product'])->name('store-product');
-Route::get('/edit-product/{id}', [ProductController::class, 'edit_product'])->middleware(['auth','admin'])->name('edit-product');
+Route::get('/edit-product/{id}', [ProductController::class, 'edit_product'])->middleware(['auth', 'admin'])->name('edit-product');
 Route::post('/update-product/{id}', [ProductController::class, 'update_product'])->name('update-product');
 Route::get('/product-alerts', [ProductController::class, 'product_alerts'])->name('product-alerts');
 Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories'])->name('get.subcategories');
 Route::get('/get-items/{category}/{subcategory}', [ProductController::class, 'getItems'])->name('get.items');
 //Order
-Route::get('/all-order', [OrderController::class, 'all_order'])->middleware(['auth','admin'])->name('all-order');
-Route::get('/add-order', [OrderController::class, 'add_order'])->middleware(['auth','admin'])->name('add-order');
+Route::get('/all-order', [OrderController::class, 'all_order'])->middleware(['auth', 'admin'])->name('all-order');
+Route::get('/add-order', [OrderController::class, 'add_order'])->middleware(['auth', 'admin'])->name('add-order');
 Route::post('/store-order', [OrderController::class, 'store_order'])->name('store-order');
 Route::get('/invoice/{id}', [OrderController::class, 'show'])->name('invoice.show');
 Route::post('/order/payment', [OrderController::class, 'paymentUpdate'])->name('order.payment');
 Route::get('/Voucher/{id}', [OrderController::class, 'show_voucher'])->name('Voucher.show');
 
 //Order
-Route::get('/all-menu', [MenuEstimateController::class, 'all_menu'])->middleware(['auth','admin'])->name('all-menu');
-Route::get('/add-menu', [MenuEstimateController::class, 'add_menu'])->middleware(['auth','admin'])->name('add-menu');
+Route::get('/all-menu', [MenuEstimateController::class, 'all_menu'])->middleware(['auth', 'admin'])->name('all-menu');
+Route::get('/add-menu', [MenuEstimateController::class, 'add_menu'])->middleware(['auth', 'admin'])->name('add-menu');
 Route::post('/store-menu', [MenuEstimateController::class, 'store_menu'])->name('store-menu');
 Route::get('/menu-invoice/{id}', [MenuEstimateController::class, 'show'])->name('menu.invoice.show');
 
@@ -106,29 +106,29 @@ Route::get('/menu-invoice/{id}', [MenuEstimateController::class, 'show'])->name(
 // menu Items
 
 //warehouse
-Route::get('/warehouse', [WarehouseController::class, 'warehouse'])->middleware(['auth','admin'])->name('warehouse');
+Route::get('/warehouse', [WarehouseController::class, 'warehouse'])->middleware(['auth', 'admin'])->name('warehouse');
 Route::post('/store-warehouse', [WarehouseController::class, 'store_warehouse'])->name('store-warehouse');
 Route::post('/update-warehouse', [WarehouseController::class, 'update_warehouse'])->name('update-warehouse');
 
 //supplier
-Route::get('/supplier', [SupplierController::class, 'supplier'])->middleware(['auth','admin'])->name('supplier');
+Route::get('/supplier', [SupplierController::class, 'supplier'])->middleware(['auth', 'admin'])->name('supplier');
 Route::post('/store-supplier', [SupplierController::class, 'store_supplier'])->name('store-supplier');
 Route::post('/update-supplier', [SupplierController::class, 'update_supplier'])->name('update-supplier');
 
 //Staff
-Route::get('/staff', [StaffController::class, 'staff'])->middleware(['auth','admin'])->name('staff');
+Route::get('/staff', [StaffController::class, 'staff'])->middleware(['auth', 'admin'])->name('staff');
 Route::post('/store-staff', [StaffController::class, 'store_staff'])->name('store-staff');
 Route::post('/update-staff', [StaffController::class, 'update_staff'])->name('update-staff');
 
 //Staff Salary 
-Route::get('/StaffSalary', [StaffSalaryController::class, 'StaffSalary'])->middleware(['auth','admin'])->name('StaffSalary');
+Route::get('/StaffSalary', [StaffSalaryController::class, 'StaffSalary'])->middleware(['auth', 'admin'])->name('StaffSalary');
 Route::post('/store-StaffSalary', [StaffSalaryController::class, 'store_StaffSalary'])->name('store-StaffSalary');
 Route::post('/update-StaffSalary', [StaffSalaryController::class, 'update_StaffSalary'])->name('update-StaffSalary');
 
 
 //Purchase 
-Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->middleware(['auth','admin'])->name('Purchase');
-Route::get('/add-purchase', [PurchaseController::class, 'add_purchase'])->middleware(['auth','admin'])->name('add-purchase');
+Route::get('/Purchase', [PurchaseController::class, 'Purchase'])->middleware(['auth', 'admin'])->name('Purchase');
+Route::get('/add-purchase', [PurchaseController::class, 'add_purchase'])->middleware(['auth', 'admin'])->name('add-purchase');
 Route::post('/store-Purchase', [PurchaseController::class, 'store_Purchase'])->name('store-Purchase');
 Route::post('/update-Purchase', [PurchaseController::class, 'update_Purchase'])->name('update-Purchase');
 Route::post('/purchases-payment', [PurchaseController::class, 'purchases_payment'])->name('purchases-payment');
@@ -170,7 +170,7 @@ Route::get('/customer', [CustomerController::class, 'customer'])->name('customer
 Route::post('/store-customer', [CustomerController::class, 'store_customer'])->name('store-customer');
 Route::post('/update-customer', [CustomerController::class, 'update_customer'])->name('update-customer');
 Route::post('/customer/recovery', [CustomerController::class, 'processRecovery'])->name('customer.recovery');
-Route::get('/customer-recovires', [CustomerController::class, 'customer_recovires'])->middleware(['auth','admin'])->name('customer-recovires');
+Route::get('/customer-recovires', [CustomerController::class, 'customer_recovires'])->middleware(['auth', 'admin'])->name('customer-recovires');
 Route::post('/customer/credit', [CustomerController::class, 'addCredit'])->name('customer.credit');
 
 //Vendors
@@ -186,4 +186,4 @@ Route::middleware('auth')->group(function () {
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
