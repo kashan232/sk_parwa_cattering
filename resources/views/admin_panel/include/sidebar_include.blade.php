@@ -96,6 +96,14 @@
                         <span class="menu-title">Order</span>
                     </a>
                 </li>
+
+                <li class="sidebar-menu-item ">
+                    <a href="{{ route('all-menu') }}" class="nav-link ">
+                        <i class="menu-icon la la-warehouse"></i>
+                        <span class="menu-title">Estimate</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-menu-item ">
                     <a href="{{ route('product-alerts') }}" class="nav-link ">
                         <i class="menu-icon las la-bell"></i>

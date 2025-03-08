@@ -60,6 +60,11 @@
                     <div class="col-lg-12 col-md-12 mb-30">
                         <div class="card">
                             <div class="card-body">
+                                @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong>Success!</strong> {{ session('success') }}.
+                                </div>
+                                @endif
                                 @if (session()->has('error'))
                                 <div class="alert alert-danger">
                                     <strong>Error!</strong> {{ session('error') }}.
@@ -71,7 +76,7 @@
                                         <!-- Customer Info -->
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group" id="supplier-wrapper">
-                                                <label class="form-label">Customers</label>
+                                                <label class="form-label">Clients</label>
                                                 <select name="customer_info" class="select2-basic form-control" id="customer-select" required>
                                                     <option selected disabled>Select One</option>
                                                     @foreach($Customers as $Customer)
@@ -104,7 +109,7 @@
                                         <!-- Delivery Date -->
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
-                                                <label>Delivery Date</label>
+                                                <label>Program Date</label>
                                                 <input type="date" name="delivery_date" class="form-control bg--white" required>
                                             </div>
                                         </div>
@@ -117,33 +122,35 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-xl-4 col-sm-6">
+                                            <div class="form-group">
+                                                <label>Venue</label>
+                                                <input type="text" name="Venue" class="form-control bg--white" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-sm-6">
+                                            <div class="form-group">
+                                                <label>Person Program</label>
+                                                <input type="number" name="person_program" class="form-control bg--white" required>
+
+                                            </div>
+                                        </div>
                                         <!-- Event Type -->
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
                                                 <label>Event Type</label>
                                                 <input type="text" name="event_type" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
                                         <!-- Order Status -->
-                                        <div class="col-xl-4 col-sm-6">
-                                            <div class="form-group">
-                                                <label>Order Status</label>
-                                                <select name="order_status" class="form-control">
-                                                    <option value="Pending" selected>Pending</option>
-                                                    <option value="Confirmed">Confirmed</option>
-                                                    <option value="Preparing">Preparing</option>
-                                                    <option value="Delivered">Delivered</option>
-                                                    <option value="Cancelled">Cancelled</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
                                         <!-- Special Instructions -->
-                                        <div class="col-xl-8 col-sm-12">
+                                        <div class="col-xl-12 col-sm-12">
                                             <div class="form-group">
                                                 <label>Special Instructions</label>
                                                 <textarea name="special_instructions" class="form-control" rows="3" placeholder="Enter any special requests or instructions"></textarea>
@@ -212,6 +219,20 @@
                                                         <input type="text" id="payable_amount" name="payable_amount" class="form-control" readonly>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Advance Paid</label>
+                                                        <input type="text" id="advance_paid" name="advance_paid" class="form-control" oninput="calculateRemaining()">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Remaining Amount</label>
+                                                        <input type="text" id="remaining_amount" name="remaining_amount" class="form-control" readonly>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -271,7 +292,7 @@
                         success: function(data) {
                             itemDropdown.empty().append('<option value="" selected disabled>Select Item</option>');
                             $.each(data, function(index, item) {
-                                itemDropdown.append('<option value="' + item.id + '" data-unit="' + item.unit + '" data-price="' + item.price + '">' + item.name + '</option>');
+                                itemDropdown.append('<option value="' + item.name + '" data-unit="' + item.unit + '" data-price="' + item.price + '">' + item.name + '</option>');
                             });
                         }
                     });
@@ -300,16 +321,14 @@
                 var quantity = parseFloat(row.find('.quantity').val()) || 0;
                 var price = parseFloat(row.find('.price').val()) || 0;
                 var total = quantity * price;
-
                 row.find('.total').val(total.toFixed(2));
 
                 calculateTotalPrice();
             }
 
-            // Function to calculate total price and payable amount
+
             function calculateTotalPrice() {
                 var totalPrice = 0;
-
                 $('.total').each(function() {
                     totalPrice += parseFloat($(this).val()) || 0;
                 });
@@ -319,7 +338,37 @@
                 var discount = parseFloat($('#discount').val()) || 0;
                 var payableAmount = totalPrice - discount;
                 $('#payable_amount').val(payableAmount.toFixed(2));
+
+                calculateRemaining(); // Advance aur remaining amount update karne ke liye
             }
+
+            function calculateRemaining() {
+                let payable = parseFloat($('#payable_amount').val()) || 0;
+                let advance = parseFloat($('#advance_paid').val()) || 0;
+
+                if (advance > payable) {
+                    advance = payable; // Advance paid zyada nahi ho sakta payable amount se
+                    $('#advance_paid').val(advance.toFixed(2)); // Agar zyada ho, to max payable pe lock karna
+                }
+
+                let remaining = payable - advance;
+                $('#remaining_amount').val(remaining.toFixed(2));
+            }
+
+            // Events
+            $(document).on('input', '.quantity, .price', function() {
+                var row = $(this).closest('tr'); // Agar table mein ho
+                calculateTotal(row);
+            });
+
+            $('#discount').on('input', function() {
+                calculateTotalPrice();
+            });
+
+            $('#advance_paid').on('input', function() {
+                calculateRemaining();
+            });
+
 
             // Discount change hone par payable amount update karna
             $(document).on('input', '#discount', function() {

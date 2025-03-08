@@ -16,7 +16,7 @@
                 <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
                     <h6 class="page-title">All Order</h6>
                     <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center breadcrumb-plugins">
-                       
+
                         <a href="{{ route('add-order') }}"
                             class="btn btn-outline--primary">
                             <i class="la la-plus"></i>Add New </a>
@@ -27,16 +27,18 @@
                         <div class="card b-radius--10">
                             <div class="card-body p-0">
                                 <div class="table-responsive--md table-responsive">
-                                    <table id="example" class="display  table table--light style--two bg--white" style="width:100%">
+                                    <table id="example" class="display table table--light style--two bg--white" style="width:100%">
                                         <thead>
                                             <tr>
-                                                {{-- <th>Name</th> --}}
-                                                <th>Customer_Name  |  Customer_Id</th>
-                                                <th>Paid Amount</th>
-                                                <th>Due Amount</th>
+                                                <th>Customer Name | Customer ID</th>
+                                                <th>Advance</th>
+                                                <th>Remaining</th>
+                                                <th>Payable Amount</th>
+                                                <th>Discount</th>
                                                 <th>Total Amount</th>
                                                 <th>Order Items</th>
                                                 <th>Status</th>
+                                                <th>Payment Status</th>
                                                 <th>Order Date</th>
                                                 <th>Action</th>
                                             </tr>
@@ -44,53 +46,72 @@
                                         <tbody>
                                             @foreach($orders as $order)
                                             <tr>
-                                                {{-- <td>{{ $order->customer->name }}</td> --}}
                                                 <td class="long-text">
-                                                    <span class="fw-bold text--primary">{{ $order->customer->name }}</span>
+                                                    <span class="fw-bold text--primary">{{ $order->customer_name }}</span>
                                                     <br>
-                                                    <span class="text--small ">{{ $order->customer->identity }}</span>
+                                                    <span class="text--small ">{{ $order->customer_id }}</span>
                                                 </td>
+                                                <td>{{ number_format($order->advance_paid, 2) }}</td>
+                                                <td>{{ number_format($order->remaining_amount, 2) }}</td>
+                                                <td>{{ number_format($order->payable_amount, 2) }}</td>
+                                                <td>{{ number_format($order->discount, 2) }}</td>
+                                                <td>{{ number_format($order->total_price, 2) }}</td>
                                                 <td>
-                                                    {{ $order->paid_amount }}
-                                                </td>
-                                                <td>
-                                                    {{ $order->due_amount }}
-                                                </td>
-                                                <td>
-                                                    {{ $order->total_amount }}
-                                                </td>
-                                                <td>
-                                                    {{ $order->orderItems->count() }}
-                                                </td>
-                                                <td>
-                                                    @if ($order->status == "pending")
-                                                        <span class="badge bg-danger">Pending</span>
+                                                    @php
+                                                    $items = json_decode($order->item_name, true);
+                                                    @endphp
+                                                    @if(is_array($items))
+                                                    {{ implode(', ', $items) }}
                                                     @else
-                                                        <span class="badge bg-success">Delivered</span>
+                                                    {{ $order->item_name }}
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{ $order->order_date }}
+                                                    @php
+                                                    $statusColors = [
+                                                    'Pending' => 'bg-danger',
+                                                    'Confirmed' => 'bg-warning',
+                                                    'Preparing' => 'bg-info',
+                                                    'Delivered' => 'bg-success',
+                                                    'Cancelled' => 'bg-secondary'
+                                                    ];
+                                                    @endphp
+                                                    <span class="badge {{ $statusColors[$order->order_status] ?? 'bg-dark' }}">
+                                                        {{ ucfirst($order->order_status) }}
+                                                    </span>
                                                 </td>
-                                                {{-- <td>
-                                                    <strong class="badge badge--danger">{{ $product->alert_quantity }}</strong>
-                                                </td> --}}
-                                                {{-- <td>{{ $product->unit }}</td>
-                                                <td>{{ $product->wholesale_price }}</td>
-                                                <td>{{ $product->retail_price }}</td> --}}
                                                 <td>
-                                                    <div class="button--group">
-                                                        <a href="{{ route('edit-product',['id' => $order->id ]) }}"
-                                                            class="btn btn-sm btn-outline--primary ms-1 editBtn"><i
-                                                                class="las la-pen"></i> Edit</a>
-                                                        <a href="{{ route('all-order-item',$order->id) }}"
-                                                            class="btn btn-sm btn-outline--primary ms-1 editBtn"><i
-                                                                class="las la-pen"></i> View Items</a>
-                                                    </div>
+                                                    @php
+                                                    $statusColors = [
+                                                    'Paid' => 'bg-success',
+                                                    'Unpaid' => 'bg-danger',
+                                                    ];
+                                                    @endphp
+                                                    <span class="badge {{ $statusColors[$order->payment_status] ?? 'bg-dark' }}">
+                                                        {{ ucfirst($order->payment_status) }}
+                                                    </span>
                                                 </td>
-                                                @endforeach
+                                                <td>{{ \Carbon\Carbon::parse($order->sale_date)->format('d M Y') }}</td>
+                                                <td>
+                                                    <a href="{{ route('invoice.show', $order->id) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-file-invoice"></i> Invoice
+                                                    </a>
+                                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#paymentModal"
+                                                        data-id="{{ $order->id }}"
+                                                        data-remaining="{{ $order->remaining_amount }}"
+                                                        data-paid="{{ $order->advance_paid }}">
+                                                        <i class="fas fa-dollar-sign"></i> Payment
+                                                    </button>
+                                                    <a href="{{ route('Voucher.show', $order->id) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-file-invoice"></i> Payment Voucher
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
+
                                     <!-- table end -->
                                 </div>
                             </div>
@@ -100,4 +121,83 @@
             </div>
         </div>
     </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Make Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm">
+                        @csrf
+                        <input type="hidden" id="order_id" name="order_id">
+
+                        <div class="mb-3">
+                            <label for="remaining_amount" class="form-label">Remaining Amount</label>
+                            <input type="text" class="form-control" id="remaining_amount" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paid_amount" class="form-label">Paid Amount</label>
+                            <input type="number" class="form-control" id="paid_amount" name="paid_amount">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     @include('admin_panel.include.footer_include')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var paymentModal = document.getElementById("paymentModal");
+
+            paymentModal.addEventListener("show.bs.modal", function(event) {
+                var button = event.relatedTarget;
+                var orderId = button.getAttribute("data-id");
+                var remainingAmount = parseFloat(button.getAttribute("data-remaining")) || 0;
+
+                document.getElementById("order_id").value = orderId;
+                document.getElementById("remaining_amount").value = remainingAmount.toFixed(2);
+                document.getElementById("original_remaining").value = remainingAmount.toFixed(2); // Hidden Field
+                document.getElementById("paid_amount").value = "";
+            });
+
+            document.getElementById("paid_amount").addEventListener("input", function() {
+                var originalRemaining = parseFloat(document.getElementById("original_remaining").value); // Safe value
+                var paid = parseFloat(this.value) || 0;
+                var newRemaining = originalRemaining - paid;
+
+                document.getElementById("remaining_amount").value = newRemaining >= 0 ? newRemaining.toFixed(2) : "0.00";
+            });
+
+            document.getElementById("paymentForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                fetch("{{ route('order.payment') }}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector("input[name='_token']").value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Payment Successfully Updated");
+                            location.reload();
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    });
+            });
+        });
+    </script>

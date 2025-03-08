@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Sub_cat_Cotnroller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MenuEstimateController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
@@ -86,12 +87,23 @@ Route::get('/get-items/{category}/{subcategory}', [ProductController::class, 'ge
 Route::get('/all-order', [OrderController::class, 'all_order'])->middleware(['auth','admin'])->name('all-order');
 Route::get('/add-order', [OrderController::class, 'add_order'])->middleware(['auth','admin'])->name('add-order');
 Route::post('/store-order', [OrderController::class, 'store_order'])->name('store-order');
+Route::get('/invoice/{id}', [OrderController::class, 'show'])->name('invoice.show');
+Route::post('/order/payment', [OrderController::class, 'paymentUpdate'])->name('order.payment');
+Route::get('/Voucher/{id}', [OrderController::class, 'show_voucher'])->name('Voucher.show');
+
+//Order
+Route::get('/all-menu', [MenuEstimateController::class, 'all_menu'])->middleware(['auth','admin'])->name('all-menu');
+Route::get('/add-menu', [MenuEstimateController::class, 'add_menu'])->middleware(['auth','admin'])->name('add-menu');
+Route::post('/store-menu', [MenuEstimateController::class, 'store_menu'])->name('store-menu');
+Route::get('/menu-invoice/{id}', [MenuEstimateController::class, 'show'])->name('menu.invoice.show');
+
+
 // Route::post('/store-product', [ProductController::class, 'store_product'])->name('store-product');
 // Route::get('/edit-product/{id}', [ProductController::class, 'edit_product'])->middleware(['auth','admin'])->name('edit-product');
 // Route::post('/update-product/{id}', [ProductController::class, 'update_product'])->name('update-product');
 // Route::get('/product-alerts', [ProductController::class, 'product_alerts'])->name('product-alerts');
 // Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories']);
-// Order Items
+// menu Items
 
 //warehouse
 Route::get('/warehouse', [WarehouseController::class, 'warehouse'])->middleware(['auth','admin'])->name('warehouse');
