@@ -18,22 +18,14 @@ class HomeController extends Controller
 
     public function welcome(Request $request)
     {
-        if (Auth::id()) {
-            $userId = Auth::id();
+        $products = Product::all(); // Sare products le ayega
 
-
-            $products = Product::all(); // Sare products le ayega
-
-            $all_categories = Category::where('admin_or_user_id', '=', $userId)
-                ->get()
-                ->map(function ($category) {
-                    $category->products_count = $category->products()->count();
-                    return $category;
-                });
-            return view('welcome', compact('products','all_categories'));
-        } else {
-            return redirect()->back();
-        }
+        $all_categories = Category::get()
+            ->map(function ($category) {
+                $category->products_count = $category->products()->count();
+                return $category;
+            });
+        return view('welcome', compact('products', 'all_categories'));
     }
 
     public function home()

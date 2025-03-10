@@ -87,6 +87,8 @@ class OrderController extends Controller
                 'payable_amount' => $payableAmount,
                 'advance_paid' => $advancePaid,
                 'remaining_amount' => $remainingAmount,
+                'payment_status' => 'Unpaid',
+                'order_type' => 'System Order',
             ];
 
             // Order create karna
@@ -109,7 +111,6 @@ class OrderController extends Controller
     {
         $order = Order::with('Customer')->findOrFail($id);
         $amountInWords = ucwords(Terbilang::make($order->payable_amount)) . ' Only';
-
         return view('admin_panel.order.show_voucher', compact('order', 'amountInWords'));
     }
 
@@ -137,4 +138,85 @@ class OrderController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Payment updated successfully!']);
     }
+
+    public function save_order(Request $request)
+    {
+        // `items` array extract karna
+        $items = $request->input('items', []);
+
+        // Alag-alag fields ke liye values extract karna
+        $itemCategories = [];
+        $itemSubcategories = [];
+        $itemNames = [];
+        $units = [];
+        $quantities = [];
+        $prices = [];
+        $totals = [];
+
+        foreach ($items as $item) {
+            $itemCategories[] = $item['item_category'] ?? '';
+            $itemSubcategories[] = $item['item_subcategory'] ?? '';
+
+            // Item name clean karna (category/subcategory aur \n hata kar)
+            $cleanedItemName = preg_replace('/\s*\(.*?\)|\n.*/', '', $item['item_name'] ?? '');
+            $cleanedItemName = trim($cleanedItemName);
+
+            $itemNames[] = $cleanedItemName;
+            $units[] = $item['unit'] ?? '';
+            $quantities[] = $item['quantity'] ?? 0;
+            $prices[] = $item['price'] ?? 0;
+            $totals[] = $item['total'] ?? 0;
+        }
+
+
+        $orderData = [
+            'customer_name' => $request->input('client_name'),
+            'sale_date' => $request->input('sale_date', now()),
+            'order_name' => $request->input('order_name', ''),
+            'delivery_date' => $request->input('program_date', ''),
+            'delivery_time' => $request->input('delivery_time', ''),
+            'venue' => $request->input('venue', ''),
+            'person_program' => $request->input('person_program', ''),
+            'special_instructions' => $request->input('special_instructions', ''),
+            'note' => $request->input('note', ''),
+            'item_category' => json_encode($itemCategories),
+            'item_subcategory' => json_encode($itemSubcategories),
+            'item_name' => json_encode($itemNames),
+            'unit' => json_encode($units),
+            'quantity' => json_encode($quantities),
+            'price' => json_encode($prices),
+            'total' => json_encode($totals),
+            'total_price' => $request->input('total_price', 0),
+            'discount' => $request->input('discount', 0),
+            'payable_amount' => $request->input('total_price', 0),
+            'advance_paid' => $request->input('advance_paid', 0),
+            'remaining_amount' => $request->input('total_price', 0),
+            'order_status' => 'Pending',
+            'payment_status' => 'Unpaid',
+            'order_type' => 'Online Order',
+        ];
+
+        $order = Order::create($orderData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order saved successfully!',
+            'order_id' => $order->id
+        ]);
+    }
+
+    public function online_order()
+    {
+
+        // dd("Ad");
+        if (Auth::id()) {
+            $userId = Auth::id();
+            $orders = Order::where('order_type', '=', 'Online Order')->get();
+            return view('admin_panel.order.online_order', compact('orders'));
+        } else {
+            return redirect()->back();
+        }
+    }
+
+
 }

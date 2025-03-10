@@ -4,8 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
     <title>SK PARWA</title>
     <link rel="icon" type="image/png" href="order_page/assets/images/favicon.png">
     <link rel="stylesheet" href="order_page/assets/css/all.min.css">
@@ -168,53 +167,55 @@
     <!-- Order Table Modal -->
     <!-- Order Now Modal -->
     <!-- Order Now Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content" style="font-family: 'Poppins', sans-serif;">
                 <div class="modal-header bg-dark text-white">
                     <h5 class="modal-title text-white" id="cartModalLabel">Order Summary</h5>
-                    <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close">
-                        ✖
-                    </button>
+                    <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close">✖</button>
                 </div>
                 <div class="modal-body">
+                    <!-- CSRF Token -->
+                    <meta name="csrf-token" content="{{ csrf_token() }}">
+
                     <!-- Order Details -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <label class="form-label">Client Name</label>
-                            <input type="text" class="form-control" placeholder="Enter Client Name">
+                            <input type="text" class="form-control" name="client_name" placeholder="Enter Client Name">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Order Date</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" name="sale_date">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Order Name</label>
-                            <input type="text" class="form-control" placeholder="Enter Order Name">
+                            <input type="text" class="form-control" name="order_name" placeholder="Enter Order Name">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Program Date</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" name="program_date">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Delivery Time</label>
-                            <input type="time" class="form-control">
+                            <input type="time" class="form-control" name="delivery_time">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Venue</label>
-                            <input type="text" class="form-control" placeholder="Enter Venue">
+                            <input type="text" class="form-control" name="venue" placeholder="Enter Venue">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Person Program</label>
-                            <input type="text" class="form-control" placeholder="Enter Person Name">
+                            <input type="text" class="form-control" name="person_program" placeholder="Enter Person Name">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Event Type</label>
-                            <input type="text" class="form-control" placeholder="Enter Event Type">
+                            <input type="text" class="form-control" name="event_type" placeholder="Enter Event Type">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Special Instructions</label>
-                            <textarea class="form-control" rows="1" placeholder="Enter Special Instructions"></textarea>
+                            <textarea class="form-control" name="special_instructions" rows="1" placeholder="Enter Special Instructions"></textarea>
                         </div>
                     </div>
 
@@ -232,25 +233,24 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="cartItems">
-                            <!-- Items will be dynamically added here -->
-                        </tbody>
+                        <tbody id="cartItems"></tbody>
                     </table>
 
                     <!-- Subtotal -->
                     <div class="text-end mt-3">
-                        <h4><strong>Subtotal: <h1 id="subtotal" class="text-success">PKR 0</h1></strong></h4>
+                        <h4><strong>Subtotal: <span id="subtotal" class="text-success">PKR 0</span></strong></h4>
                     </div>
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success">Confirm Order</button>
+                    <button type="button" class="btn btn-success" id="confirmOrder">Confirm Order</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 
@@ -304,6 +304,7 @@
     <script src="order_page/assets/js/jquery.animatedheadline.min.js"></script>
     <!--script/custom js-->
     <script src="order_page/assets/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -372,6 +373,79 @@
                 }
             });
 
+        });
+
+        document.getElementById("confirmOrder").addEventListener("click", function() {
+            let orderData = {
+                client_name: document.querySelector("[name='client_name']").value.trim(),
+                sale_date: document.querySelector("[name='sale_date']").value.trim(),
+                order_name: document.querySelector("[name='order_name']").value.trim(),
+                program_date: document.querySelector("[name='program_date']").value.trim(),
+                delivery_time: document.querySelector("[name='delivery_time']").value.trim(),
+                venue: document.querySelector("[name='venue']").value.trim(),
+                person_program: document.querySelector("[name='person_program']").value.trim(),
+                event_type: document.querySelector("[name='event_type']").value.trim(),
+                special_instructions: document.querySelector("[name='special_instructions']").value.trim(),
+                total_price: document.getElementById("subtotal").textContent.replace("PKR ", "").trim(),
+                items: []
+            };
+
+            document.querySelectorAll("#cartItems tr").forEach(row => {
+                orderData.items.push({
+                    item_name: row.children[0].textContent.trim(),
+                    item_category: row.children[1].textContent.trim(),
+                    item_subcategory: row.children[2]?.textContent.trim() || "", // Handle missing subcategory
+                    unit: row.children[3].textContent.trim(),
+                    price: row.children[4].textContent.trim(),
+                    quantity: row.querySelector(".quantity-input").value,
+                    total: row.children[6].textContent.trim(),
+                });
+            });
+
+            fetch("{{ route('save.order') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "Order Placed!",
+                            text: "Your order has been placed successfully.",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Page refresh after closing alert
+                            }
+                        });
+
+                        document.getElementById("cartModal").classList.remove("show");
+                        document.querySelector(".modal-backdrop")?.remove(); // Handle modal backdrop safely
+                        document.getElementById("cartItems").innerHTML = ""; // Clear Cart
+                        document.getElementById("subtotal").textContent = "PKR 0";
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "There was an issue saving your order. Please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong. Please try again later.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                });
         });
     </script>
 

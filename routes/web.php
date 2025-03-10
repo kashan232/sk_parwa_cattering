@@ -91,6 +91,11 @@ Route::get('/invoice/{id}', [OrderController::class, 'show'])->name('invoice.sho
 Route::post('/order/payment', [OrderController::class, 'paymentUpdate'])->name('order.payment');
 Route::get('/Voucher/{id}', [OrderController::class, 'show_voucher'])->name('Voucher.show');
 
+Route::post('/save-order', [OrderController::class, 'save_order'])->name('save.order');
+
+Route::get('/online-order', [OrderController::class, 'online_order'])->name('online-order');
+
+
 //Order
 Route::get('/all-menu', [MenuEstimateController::class, 'all_menu'])->middleware(['auth', 'admin'])->name('all-menu');
 Route::get('/add-menu', [MenuEstimateController::class, 'add_menu'])->middleware(['auth', 'admin'])->name('add-menu');

@@ -63,82 +63,40 @@
                                 <div class="invoice-header">
                                     <img src="{{ asset('assets\images\logo.jpg') }}" alt="Company Logo" class="mb-3" style="max-width: 150px;">
                                     <p><strong>Contact for Query:</strong> 0333-2548976 | 0333-2548976</p>
-                                    <p><strong>Invoice Date: {{ $order->sale_date }}</strong> | <strong>Program Date: {{ $order->delivery_date }}</strong></p>
+                                    <p><strong>Invoice Date: {{ $order->sale_date }}</strong></p>
                                 </div>
                                 <div class="row mt-3 text-left">
                                     <div class="col-md-6"><strong>Client Name:</strong> {{ $order->customer_name }}</div>
                                     <div class="col-md-6 text-right"><strong>Invoice #:</strong> {{ $order->id }}</div>
                                 </div>
-                                <div class="row mt-2 text-left">
-                                    <div class="col-md-6"><strong>Venue:</strong> {{ $order->Venue }}</div>
-                                    <div class="col-md-6 text-right"><strong>Person Program:</strong> {{ $order->person_program ?? 'N/A' }}</div>
-                                </div>
-                                <h4 class="mb-3" style="font-weight: 900;">{{ $order->event_type }} Payment Voucher</h4>
+                                <hr>
+                                <h4 class="mb-3" style="font-weight: 900;">Payment & Receipt Voucher</h4>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>S.No</th>
-                                            <th>Item Name</th>
-                                            <th>Main Category</th>
-                                            <th>Rate</th>
-                                            <th>QTY</th>
+                                            <th>Particular</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                        $categories = json_decode($order->item_category, true);
-                                        $names = json_decode($order->item_name, true);
-                                        $units = json_decode($order->unit, true);
-                                        $quantities = json_decode($order->quantity, true);
-                                        $prices = json_decode($order->price, true);
-                                        $totals = json_decode($order->total, true);
-                                        @endphp
-                                        @foreach ($names as $index => $name)
                                         <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $name }}</td>
-                                            <td>{{ $categories[$index] ?? '-' }}</td>
-                                            <td>{{ number_format($prices[$index], 2) }}</td>
-                                            <td>{{ $quantities[$index] }} {{ $units[$index] ?? '-' }}</td>
-                                            <td>{{ number_format($totals[$index], 2) }}</td>
+                                            <td>1</td>
+                                            <td><strong>Recived Amount Rs</strong> {{ $amountInWords }} Against {{ $order->event_type }} Program Date ({{ $order->delivery_date }})  <br> <strong> Program Venue </strong>: {{ $order->Venue }}</td>
+                                            <td>{{ number_format($order->payable_amount, 2) }}</td>
                                         </tr>
-                                        @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="4"></td>
-                                            <td><strong>Total Price:</strong></td>
-                                            <td><strong>{{ number_format($order->total_price, 2) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4"></td>
-                                            <td><strong>Discount:</strong></td>
-                                            <td><strong>{{ number_format($order->discount, 2) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4"></td>
-                                            <td><strong>Payable Amount:</strong></td>
-                                            <td><strong>{{ number_format($order->payable_amount, 2) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4"></td>
+                                            <td colspan="1"></td>
                                             <td><strong> Paid Amount:</strong></td>
                                             <td><strong>{{ number_format($order->advance_paid, 2) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4"></td>
-                                            <td><strong>Remaining Amount:</strong></td>
-                                            <td><strong>{{ number_format($order->remaining_amount, 2) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="6"><strong>In Words:</strong> {{ $amountInWords }}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
                                 <div class="row mt-5 text-left">
                                     <div class="col-md-6">
-                                        <p><strong>Customer Signature:</strong> __________________</p>
+                                        <p><strong>In Words:</strong> {{ $amountInWords }}</p>
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <p><strong>Authorized Signature:</strong> __________________</p>

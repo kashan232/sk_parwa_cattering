@@ -96,6 +96,13 @@
                         <span class="menu-title">Order</span>
                     </a>
                 </li>
+                
+                <li class="sidebar-menu-item ">
+                    <a href="{{ route('online-order') }}" class="nav-link ">
+                        <i class="menu-icon la la-warehouse"></i>
+                        <span class="menu-title">Online Orders</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-menu-item ">
                     <a href="{{ route('all-menu') }}" class="nav-link ">
