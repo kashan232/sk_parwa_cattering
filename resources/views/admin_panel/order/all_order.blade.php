@@ -26,6 +26,11 @@
                     <div class="col-lg-12">
                         <div class="card b-radius--10">
                             <div class="card-body p-0">
+                                @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong>Success!</strong> {{ session('success') }}.
+                                </div>
+                                @endif
                                 <div class="table-responsive--md table-responsive">
                                     <table id="example" class="display table table--light style--two bg--white" style="width:100%">
                                         <thead>
@@ -106,6 +111,12 @@
                                                     <a href="{{ route('Voucher.show', $order->id) }}" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-file-invoice"></i> Payment Voucher
                                                     </a>
+                                                    <!-- Gate Pass Button -->
+                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#gatePassModal"
+                                                        data-order-id="{{ $order->id }}">
+                                                        <i class="fas fa-truck"></i> Get Pass
+                                                    </button>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -151,6 +162,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Gate Pass Modal -->
+    <div class="modal fade" id="gatePassModal" tabindex="-1" aria-labelledby="gatePassModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate Gate Pass</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('gatepass.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="order_id" id="gatepassOrderId">
+
+                        <div class="mb-3">
+                            <label class="form-label">Select Inventory Items</label>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Stock</th>
+                                        <th>Send Quantity</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventorySelection">
+                                    <!-- Dynamic Rows Will Be Added Here -->
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-success btn-sm" id="addMoreInventory">
+                                <i class="fas fa-plus"></i> Add More
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning">Generate Gate Pass</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
     @include('admin_panel.include.footer_include')
@@ -198,6 +251,58 @@
                             alert("Error: " + data.message);
                         }
                     });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let gatePassModal = document.getElementById("gatePassModal");
+
+            gatePassModal.addEventListener("show.bs.modal", function(event) {
+                let button = event.relatedTarget;
+                let orderId = button.getAttribute("data-order-id");
+                document.getElementById("gatepassOrderId").value = orderId;
+
+                fetch("{{ route('get.order.inventory', ':id') }}".replace(':id', orderId))
+                    .then(response => response.json())
+                    .then(data => {
+                        let inventorySelection = document.getElementById("inventorySelection");
+                        inventorySelection.innerHTML = "";
+
+                        data.forEach(item => {
+                            let row = `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.quantity}</td>
+                            <td><input type="number" name="inventory[${item.id}]" min="1" max="${item.quantity}" class="form-control send-qty" data-stock="${item.quantity}" required></td>
+                            <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                            inventorySelection.innerHTML += row;
+                        });
+                    });
+            });
+
+            // Remove row functionality
+            document.getElementById("inventorySelection").addEventListener("click", function(e) {
+                if (e.target.classList.contains("remove-row") || e.target.closest(".remove-row")) {
+                    e.target.closest("tr").remove();
+                }
+            });
+
+            // Add more functionality
+            document.getElementById("addMoreInventory").addEventListener("click", function() {
+                let inventorySelection = document.getElementById("inventorySelection");
+                let newRow = `
+            <tr>
+                <td><input type="text" name="new_item_name[]" class="form-control" placeholder="Item Name"></td>
+                <td>N/A</td>
+                <td><input type="number" name="new_item_quantity[]" min="1" class="form-control" required></td>
+                <td><button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+                inventorySelection.innerHTML += newRow;
             });
         });
     </script>

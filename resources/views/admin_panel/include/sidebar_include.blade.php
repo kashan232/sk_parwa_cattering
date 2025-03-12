@@ -111,7 +111,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-item ">
+                <!-- <li class="sidebar-menu-item ">
                     <a href="{{ route('product-alerts') }}" class="nav-link ">
                         <i class="menu-icon las la-bell"></i>
                         <span class="menu-title">Stock Alerts</span>
@@ -126,14 +126,14 @@
                             <small>&nbsp;<i class="fa fa-circle text--danger" aria-hidden="true" aria-label="Returned" data-bs-original-title="Returned"></i></small>
                             @endif --}}
                     </a>
-                </li>
+                </li> -->
 
-                <li class="sidebar-menu-item ">
+                <!-- <li class="sidebar-menu-item ">
                     <a href="{{ route('warehouse') }}" class="nav-link ">
                         <i class="menu-icon la la-warehouse"></i>
                         <span class="menu-title">Warehouse</span>
                     </a>
-                </li>
+                </li> -->
 
 
 
@@ -164,7 +164,21 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-item sidebar-dropdown">
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('kitchen.inventory') }}" class="nav-link">
+                        <i class="menu-icon la la-user-friends"></i>
+                        <span class="menu-title">Kitchen Inventory</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-item">
+                    <a href="{{ route('get-passes') }}" class="nav-link">
+                        <i class="menu-icon la la-user-friends"></i>
+                        <span class="menu-title">Gate Passes</span>
+                    </a>
+                </li>
+                
+                <!-- <li class="sidebar-menu-item sidebar-dropdown">
                     <a href="javascript:void(0)" class="">
                         <i class="menu-icon la la-shopping-bag"></i>
                         <span class="menu-title">Purchase</span>
@@ -187,24 +201,24 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> -->
 
-                <li class="sidebar-menu-item  ">
+                <!-- <li class="sidebar-menu-item  ">
                     <a href="{{ route('all-purchase-return-damage-item') }}"
                         class="nav-link">
                         <i class="menu-icon la la-dot-circle"></i>
                         <span class="menu-title">Claim Returns</span>
                     </a>
-                </li>
+                </li> -->
 
                
 
-                <li class="sidebar-menu-item">
+                <!-- <li class="sidebar-menu-item">
                     <a href="{{ route('customer-recovires') }}" class="nav-link">
                         <i class="menu-icon la la-users"></i>
                         <span class="menu-title">Customer Recoveries</span>
                     </a>
-                </li>
+                </li> -->
                 
                 {{-- <li class="sidebar-menu-item sidebar-dropdown">
                     <a href="javascript:void(0)" class="">

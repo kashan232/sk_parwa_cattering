@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Sub_cat_Cotnroller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KitchenInventoryController;
 use App\Http\Controllers\MenuEstimateController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -94,6 +95,14 @@ Route::get('/Voucher/{id}', [OrderController::class, 'show_voucher'])->name('Vou
 Route::post('/save-order', [OrderController::class, 'save_order'])->name('save.order');
 
 Route::get('/online-order', [OrderController::class, 'online_order'])->name('online-order');
+Route::post('/gatepass/store', [OrderController::class, 'store'])->name('gatepass.store');
+Route::get('/get-order-inventory/{order}', [OrderController::class, 'getOrderInventory'])->name('get.order.inventory');
+
+
+Route::get('/get-passes', [OrderController::class, 'get_passes'])->name('get-passes');
+Route::get('/gatepass/inventory/{id}', [OrderController::class, 'getGatePassInventory'])->name('gatepass.inventory');
+
+Route::post('/gatepass/return', [OrderController::class, 'returnGatePass'])->name('gatepass-return');
 
 
 //Order
@@ -182,6 +191,13 @@ Route::post('/customer/credit', [CustomerController::class, 'addCredit'])->name(
 Route::get('/vendor', [VendorController::class, 'vendor'])->name('vendor');
 Route::post('/store-vendor', [VendorController::class, 'store_vendor'])->name('store-vendor');
 Route::post('/update-vendor', [VendorController::class, 'update_vendor'])->name('update-vendor');
+
+
+Route::prefix('kitchen')->group(function () {
+    Route::get('/inventory', [KitchenInventoryController::class, 'index'])->name('kitchen.inventory');
+    Route::post('/add-item', [KitchenInventoryController::class, 'storeItem'])->name('kitchen-items.store');
+    Route::post('/add-inventory', [KitchenInventoryController::class, 'storeInventory'])->name('inventory.store');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

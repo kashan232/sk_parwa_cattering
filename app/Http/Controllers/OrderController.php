@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Models\GatePass;
+use App\Models\GatePassItem;
+use App\Models\KitchenInventory;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Riskihajar\Terbilang\Facades\Terbilang;
 
 class OrderController extends Controller
@@ -219,4 +223,130 @@ class OrderController extends Controller
     }
 
 
+    public function getOrderInventory(Order $order)
+    {
+        $inventoryItems = KitchenInventory::with('item')
+            ->get()
+            ->map(function ($inventory) {
+                return [
+                    'id' => $inventory->item->id ?? null,
+                    'name' => $inventory->item->name ?? 'N/A',
+                    'quantity' => $inventory->quantity,
+                ];
+            });
+
+        return response()->json($inventoryItems);
+    }
+
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'inventory' => 'required|array',
+            'inventory.*' => 'numeric|min:1',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Gate Pass create
+            $gatePass = GatePass::create([
+                'order_id' => $request->order_id,
+                'status' => 'pending',
+            ]);
+
+            foreach ($request->inventory as $itemId => $quantity) {
+                // Inventory check
+                $inventory = KitchenInventory::where('item_id', $itemId)->first();
+                if (!$inventory || $inventory->quantity < $quantity) {
+                    return back()->with('error', "Insufficient stock for item ID: $itemId");
+                }
+
+                // Inventory minus
+                $inventory->decrement('quantity', $quantity);
+
+                // Gate Pass Items create
+                GatePassItem::create([
+                    'gate_pass_id' => $gatePass->id,
+                    'item_id' => $itemId,
+                    'quantity' => $quantity,
+                ]);
+            }
+
+            DB::commit();
+            return back()->with('success', 'Gate Pass Generated Successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+    public function get_passes()
+    {
+
+        // dd("Ad");
+        if (Auth::id()) {
+            $userId = Auth::id();
+            $gatePasses = GatePass::get();
+            return view('admin_panel.order.get_passes', compact('gatePasses'));
+        } else {
+            return redirect()->back();
+        }
+    }
+
+    public function getGatePassInventory($id)
+    {
+        $gatePass = GatePass::with('items.item')->findOrFail($id);
+        $items = $gatePass->items->map(function ($gpItem) {
+            return [
+                'item_id' => $gpItem->item_id,
+                'name' => $gpItem->item->name,
+                'quantity' => $gpItem->quantity
+            ];
+        });
+
+        return response()->json($items);
+    }
+
+    public function returnGatePass(Request $request)
+    {
+        $request->validate([
+            'gate_pass_id' => 'required|exists:gate_passes,id',
+            'return_inventory' => 'required|array',
+            'return_inventory.*' => 'numeric|min:0',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $gatePass = GatePass::with('items')->findOrFail($request->gate_pass_id);
+
+            if ($gatePass->status == 'returned') {
+                return back()->with('error', 'This Gate Pass has already been returned.');
+            }
+
+            foreach ($request->return_inventory as $itemId => $returnQty) {
+                if ($returnQty > 0) {
+                    $gatePassItem = $gatePass->items->where('item_id', $itemId)->first();
+
+                    if ($gatePassItem && $returnQty <= $gatePassItem->quantity) {
+                        // Kitchen Inventory me quantity wapas add karo
+                        KitchenInventory::where('item_id', $itemId)->increment('quantity', $returnQty);
+                    } else {
+                        return back()->with('error', 'Invalid return quantity for item ID: ' . $itemId);
+                    }
+                }
+            }
+
+            // Gate Pass ka status update karo
+            $gatePass->update(['status' => 'returned']);
+
+            DB::commit();
+            return back()->with('success', 'Gate Pass Returned Successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
 }
