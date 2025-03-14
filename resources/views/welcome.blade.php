@@ -53,13 +53,13 @@
     <!--==========================
         MENU START
     ===========================-->
-    <nav class="navbar navbar-expand-lg main_menu">
+    <!-- <nav class="navbar navbar-expand-lg main_menu">
         <div class="container container_large">
             <a class='navbar-brand' href='index.html'>
                 <img src="order_page/assets/images/logo.png" alt="RESTINA" class="img-fluid w-100">
             </a>
         </div>
-    </nav>
+    </nav> -->
     <!--==========================
         MENU END
     ===========================-->
@@ -143,11 +143,11 @@
                         <a class='footer_logo' href='#'>
                             <img src="order_page/assets/images/logo.png" alt="RESTINA">
                         </a>
-                        <p>Cras incident lobotids feudist makes viramas sagittas eu valuta.</p>
+                        <p>SK Parwa Cater’s offers professional catering services for all types of events in Hyderabad, Sindh. Our catering team has years of experience in providing delicious food and excellent service for weddings, birthday parties, corporate events, and more. We provide both Pakistani and international cuisine and customize our menus to meet your specific needs and preferences.</p>
                         <ul>
-                            <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a class="linkedin" href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                            <li><a class="facebook" href="https://www.facebook.com/Sk.Parwa.Caters.Official"><i class="fab fa-facebook-f"></i></a></li>
+                            <li><a class="instagram" href="https://www.instagram.com/sk_parwa_caters/"><i class="fab fa-instagram"></i></a></li>
+                            <li><a class="youtube" href="https://www.youtube.com/@SKParwaCaters-123"><i class="fab fa-youtube"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="footer_copyright">
-                        <p>Copyright © SK Parwa 2025. All Rights Reserved</p>
+                        <p>Copyright © 2025 SK Parwa. All rights reserved. Designed & developed by ProWave Software Solutions.</p>
                     </div>
                 </div>
             </div>
