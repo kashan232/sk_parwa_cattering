@@ -45,29 +45,7 @@
             </div>
         </div>
     </header>
-    <!--==========================
-        HEADER END
-    ===========================-->
-
-
-    <!--==========================
-        MENU START
-    ===========================-->
-    <!-- <nav class="navbar navbar-expand-lg main_menu">
-        <div class="container container_large">
-            <a class='navbar-brand' href='index.html'>
-                <img src="order_page/assets/images/logo.png" alt="RESTINA" class="img-fluid w-100">
-            </a>
-        </div>
-    </nav> -->
-    <!--==========================
-        MENU END
-    ===========================-->
-
-
-    <!--==========================
-        BREADCRUMB AREA START
-    ===========================-->
+    
     <section class="breadcrumb_area" style="background: url(order_page/assets/images/breadcrumb_bg.jpg);">
         <div class="container">
             <div class="row wow fadeInUp">
@@ -79,14 +57,7 @@
             </div>
         </div>
     </section>
-    <!--==========================
-        BREADCRUMB AREA END
-    ===========================-->
 
-
-    <!--==========================
-        MENU STYLE 03 START
-    ===========================-->
     <section class="menu_grid_view mt_120 xs_mt_100">
         <div class="container">
             <div class="row">
@@ -112,7 +83,8 @@
                         <div class="col-xl-4 col-sm-6 wow fadeInUp">
                             <div class="single_menu">
                                 <div class="single_menu_img">
-                                    <img src="order_page/assets/images/menu_img_2.jpg" alt="menu" class="img-fluid w-100">
+                                    <img src="{{ asset('product_images/' . $product->image) }}" alt="menu" class="img-fluid w-100">
+                                    <!-- <img src="order_page/assets/images/menu_img_2.jpg" alt="menu" class="img-fluid w-100"> -->
                                 </div>
                                 <div class="single_menu_text">
                                     <a class="category" href="#">{{ $product->category->category }}</a>

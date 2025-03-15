@@ -40,7 +40,7 @@ class OrderController extends Controller
             $Customers = Customer::get();
             $Category = Category::get();
 
-            return view('admin_panel\order\add_order', compact('all_product', 'Customers', 'Category'));
+            return view('admin_panel.order.add_order', compact('all_product', 'Customers', 'Category'));
         } else {
             return redirect()->back();
         }
