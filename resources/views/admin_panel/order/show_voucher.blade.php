@@ -1,116 +1,146 @@
-<!-- meta tags and other links -->
 @include('admin_panel.include.header_include')
+
 <style>
-    .invoice,
-    .invoice-header,
-    .invoice table,
-    .invoice th,
-    .invoice td {
-        border: 2px solid #000 !important;
+    .invoice-container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border: 2px solid #000;
     }
-
-    .invoice table {
+    .invoice-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid #000;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    .invoice-header img {
+        max-width: 120px;
+    }
+    .invoice-header .header-text {
+        text-align: right;
+        flex-grow: 1;
+    }
+    .invoice-header h1 {
+        font-size: 26px;
+        font-weight: bold;
+        margin: 0;
+    }
+    .invoice-header h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+    .invoice-header p {
+        font-size: 16px;
+        margin: 5px 0;
+    }
+    .invoice-body {
+        font-size: 16px;
+    }
+    .invoice-table {
+        width: 100%;
         border-collapse: collapse;
+        margin-top: 20px;
     }
-
-    .invoice th,
-    .invoice td {
+    .invoice-table th, .invoice-table td {
+        border: 2px solid #000;
         padding: 10px;
+        text-align: left;
+        font-weight: normal;
+        word-break: keep-all;
+    }
+    .invoice-footer {
+        margin-top: 30px;
         text-align: center;
     }
-
+    .signature {
+        margin-top: 50px;
+        text-align: right;
+        font-weight: bold;
+    }
     @media print {
         body * {
             visibility: hidden;
         }
-
-        .invoice,
-        .invoice * {
+        .invoice-container, .invoice-container * {
             visibility: visible;
         }
-
-        .invoice {
+        .invoice-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 0;
-            margin: 0;
         }
-
         .invoice-footer {
             display: none;
         }
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-        }
     }
 </style>
-<!-- page-wrapper start -->
+
 <div class="page-wrapper default-version">
     @include('admin_panel.include.sidebar_include')
     @include('admin_panel.include.navbar_include')
+
     <div class="body-wrapper">
         <div class="bodywrapper__inner">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card b-radius--10">
-                        <div class="card-body p-0">
-                            <div class="invoice text-center">
-                                <div class="invoice-header">
-                                    <img src="{{ asset('assets\images\logo.jpg') }}" alt="Company Logo" class="mb-3" style="max-width: 150px;">
-                                    <p><strong>Contact for Query:</strong> 0333-2548976 | 0333-2548976</p>
-                                    <p><strong>Invoice Date: {{ $order->sale_date }}</strong></p>
-                                </div>
-                                <div class="row mt-3 text-left">
-                                    <div class="col-md-6"><strong>Client Name:</strong> {{ $order->customer_name }}</div>
-                                    <div class="col-md-6 text-right"><strong>Invoice #:</strong> {{ $order->id }}</div>
-                                </div>
-                                <hr>
-                                <h4 class="mb-3" style="font-weight: 900;">Payment & Receipt Voucher</h4>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>S.No</th>
-                                            <th>Particular</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td><strong>Recived Amount Rs</strong> {{ $amountInWords }} Against {{ $order->event_type }} Program Date ({{ $order->delivery_date }})  <br> <strong> Program Venue </strong>: {{ $order->Venue }}</td>
-                                            <td>{{ number_format($order->payable_amount, 2) }}</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="1"></td>
-                                            <td><strong> Paid Amount:</strong></td>
-                                            <td><strong>{{ number_format($order->advance_paid, 2) }}</strong></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                                <div class="row mt-5 text-left">
-                                    <div class="col-md-6">
-                                        <p><strong>In Words:</strong> {{ $amountInWords }}</p>
-                                    </div>
-                                    <div class="col-md-6 text-right">
-                                        <p><strong>Authorized Signature:</strong> __________________</p>
-                                    </div>
-                                </div>
-                                <div class="invoice-footer mt-4  mb-3">
-                                    <button onclick="window.print()" class="btn btn-danger"><i class="fas fa-print"></i> Print</button>
-                                </div>
-                            </div>
-                        </div>
+            <div class="invoice-container">
+                <!-- Invoice Header -->
+                <div class="invoice-header">
+                    <img src="{{ asset('assets/images/logo.jpg') }}" alt="Company Logo">
+                    <div class="header-text">
+                        <h1>SK Parwa Caters</h1>
+                        <h2>Receipt Voucher</h2>
+                        <p><strong>Contact:</strong> 0333-2548976 | 0333-2548976</p>
+                        <p><strong>Invoice Date:</strong> 2025-03-21</p>
                     </div>
+                </div>
+
+                <!-- Invoice Body -->
+                <div class="invoice-body">
+                    <p><strong>Client Name:</strong> {{ $order->customer_name }}</p>
+                    <p><strong>Invoice #:</strong> {{ $order->id }}</p>
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Particular</th>
+                                <th>Amount (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <strong>Received Amount Rs</strong> {{ $amountInWords }} Against 
+                                    {{ $order->event_type }} Program Date ({{ $order->delivery_date }})<br>
+                                    <strong>Program Venue:</strong> {{ $order->Venue }}
+                                </td>
+                                <td>{{ number_format($order->payable_amount, 2) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>Paid Amount:</strong></td>
+                                <td><strong>{{ number_format($order->advance_paid, 2) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p><strong>In Words:</strong> {{ $amountInWords }}</p>
+                    <div class="signature">Authorized Signature: __________________</div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="invoice-footer">
+                    <button onclick="window.print()" class="btn btn-danger"><i class="fas fa-print"></i> Print</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @include('admin_panel.include.footer_include')

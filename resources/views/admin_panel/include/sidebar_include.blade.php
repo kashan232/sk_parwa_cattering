@@ -178,6 +178,37 @@
                     </a>
                 </li>
                 
+               
+                <li class="sidebar-menu-item sidebar-dropdown">
+                    <a class="" href="javascript:void(0)">
+                        <i class="menu-icon las la-users"></i>
+                        <span class="menu-title">Accountant</span>
+                    </a>
+                    <div class="sidebar-submenu ">
+                        <ul>
+                            <li class="sidebar-menu-item ">
+                                <a class="nav-link" href="{{ route('Accountant') }}">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">Accountant</span>
+                                </a>
+                            </li>
+
+                            <li class="sidebar-menu-item ">
+                                <a class="nav-link" href="{{ route('Accountant-Ledger') }}">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">Accountant Ledger</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item ">
+                                <a class="nav-link" href="{{ route('Accountant-Expense') }}">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">Accountant Expense</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <!-- <li class="sidebar-menu-item sidebar-dropdown">
                     <a href="javascript:void(0)" class="">
                         <i class="menu-icon la la-shopping-bag"></i>

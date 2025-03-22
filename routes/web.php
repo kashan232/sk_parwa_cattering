@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountantController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Sub_cat_Cotnroller;
@@ -192,6 +193,16 @@ Route::get('/vendor', [VendorController::class, 'vendor'])->name('vendor');
 Route::post('/store-vendor', [VendorController::class, 'store_vendor'])->name('store-vendor');
 Route::post('/update-vendor', [VendorController::class, 'update_vendor'])->name('update-vendor');
 
+Route::get('/Accountant', [AccountantController::class, 'Accountant'])->middleware(['auth', 'admin'])->name('Accountant');
+Route::post('/store-Accountant', [AccountantController::class, 'store_Accountant'])->name('store-Accountant');
+Route::post('/update-Accountant', [AccountantController::class, 'update_Accountant'])->name('update-Accountant');
+
+Route::post('/update-payment', [AccountantController::class, 'update_payment'])->name('update-payment');
+Route::get('/Accountant-Ledger', [AccountantController::class, 'Accountant_Ledger'])->name('Accountant-Ledger');
+
+
+Route::get('/Accountant-Expense', [AccountantController::class, 'Accountant_Expense'])->name('Accountant-Expense');
+Route::post('/save-accountant-expense', [AccountantController::class, 'saveExpense'])->name('save-accountant-expense');
 
 Route::prefix('kitchen')->group(function () {
     Route::get('/inventory', [KitchenInventoryController::class, 'index'])->name('kitchen.inventory');
