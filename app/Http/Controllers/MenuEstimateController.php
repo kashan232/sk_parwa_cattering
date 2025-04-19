@@ -57,6 +57,7 @@ class MenuEstimateController extends Controller
                 'sale_date' => $request->input('sale_date', ''),
                 'delivery_date' => $request->input('delivery_date', ''),
                 'event_type' => $request->input('event_type', ''),
+                'food_type' => $request->input('food_type', ''),
                 'Venue' => $request->input('Venue', ''),
                 'person_program' => $request->input('person_program', ''),
                 'item_category' => json_encode($request->input('item_category', [])),

@@ -20,9 +20,15 @@
                         <div class="card b-radius--10">
                             <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
                                 <h6 class="page-title">Accountant Expense</h6>
+
+                                @auth
+                                @if(Auth::user()->usertype == 'Accountant')
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addExpenseModal">
                                     Add Expense
                                 </button>
+                                @endif
+                                @endauth
+
                             </div>
 
                             <div class="table-responsive--sm table-responsive">
@@ -30,9 +36,9 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Date</th>
                                             <th>Accountant Name</th>
                                             <th>Expense Category</th>
-                                            <th>Date</th>
                                             <th>Amount</th>
                                             <th>Description</th>
                                         </tr>
@@ -41,10 +47,10 @@
                                         @foreach ($Expenses as $key => $expense)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($expense->expense_date)->format('d-m-Y') }}</td>
                                             <td>{{ $expense->accountant->name ?? 'N/A' }}</td> {{-- Accountant name through relation --}}
                                             <td>{{ $expense->expense_category }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($expense->expense_date)->format('d-m-Y') }}</td>
-                                            <td>Rs. {{ number_format($expense->expense_amount, 2) }}</td>
+                                            <td><strong class="text-danger">Rs. {{ number_format($expense->expense_amount, 2) }}</strong></td>
                                             <td>{{ $expense->expense_description }}</td>
                                         </tr>
                                         @endforeach
@@ -76,21 +82,15 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>Accountant</label>
-                                <select class="form-control" name="accountant_id" id="accountant_id" required>
-                                    <option value="">Select Accountant</option>
-                                    @foreach ($Accountants as $accountant)
-                                    <option value="{{ $accountant->id }}" data-cash="{{ $accountant->cash_in_hand }}">
-                                        {{ $accountant->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
+                                <input type="text" class="form-control" name="accountant_id" value="{{ @Auth::user()->user_id  }}" readonly>
+                                <input type="text" class="form-control" value="{{ @Auth::user()->name  }}" readonly>
                             </div>
 
                             <!-- Cash in Hand Display -->
                             <div class="form-group mt-3">
                                 <label>Cash in Hand</label>
                                 <div id="cash_in_hand_display" class="alert alert-danger text-center font-weight-bold" style="font-size: 18px; padding: 10px;">
-                                    Select an Accountant
+                                    Rs. {{ number_format($cashInHand) }}
                                 </div>
                             </div>
 

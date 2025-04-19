@@ -303,6 +303,35 @@
                 </li>
             </ul>
             @endif
+
+            @if(Auth::check() && Auth::user()->usertype == 'Accountant')
+            <ul class="sidebar__menu">
+                <li class="sidebar-menu-item active">
+                    <a href="{{ route('home') }}" class="nav-link ">
+                        <i class="menu-icon la la-home"></i>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-item sidebar-dropdown">
+                    <a class="" href="javascript:void(0)">
+                        <i class="menu-icon las la-users"></i>
+                        <span class="menu-title">Accountant</span>
+                    </a>
+                    <div class="sidebar-submenu ">
+                        <ul>
+                            <li class="sidebar-menu-item ">
+                                <a class="nav-link" href="{{ route('Accountant-Expense') }}">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">Accountant Expense</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+            </ul>
+            @endif
             <div class="text-center mb-3 text-uppercase">
                 <span class="text--success">SK</span>
                 <span class="text--primary">Parwa</span>

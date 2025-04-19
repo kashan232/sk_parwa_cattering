@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountantLedger;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Product;
@@ -66,6 +67,7 @@ class HomeController extends Controller
 
 
                 $categories = DB::table('categories')->count();
+                $subcategories = DB::table('subcategories')->count();
                 $products = DB::table('products')->count();
                 $suppliers = DB::table('suppliers')->count();
                 $customers = DB::table('customers')->count();
@@ -73,7 +75,15 @@ class HomeController extends Controller
 
                 // $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
                 // dd($lowStockProducts);
-                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
+                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'subcategories','totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
+            }if ($usertype == 'Accountant') {
+                // Fetch all categories for the dropdown
+                $accountant = Auth::user();
+
+                $ledger = AccountantLedger::where('accountant_id', $accountant->user_id)->latest()->first();
+
+                $cashInHand = $ledger ? $ledger->cash_in_hand : 0;
+                return view('Accountant_panel.accountant_dashboard', compact('cashInHand'));
             }
         } else {
             return Redirect()->route('login');

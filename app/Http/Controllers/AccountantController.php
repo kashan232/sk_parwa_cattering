@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Accountant;
 use App\Models\AccountantExpense;
 use App\Models\AccountantLedger;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AccountantController extends Controller
 {
@@ -31,15 +33,26 @@ class AccountantController extends Controller
         if (Auth::id()) {
             $usertype = Auth()->user()->usertype;
             $userId = Auth::id();
-            Accountant::create([
+            $Accountant = Accountant::create([
                 'admin_id'    => $userId,
                 'name'          => $request->name,
                 'Cnic'          => $request->Cnic,
                 'Number'          => $request->Number,
                 'Address'          => $request->Address,
                 'usertype'          => $request->usertype,
+                'email'          => $request->email,
+                'password'          => $request->password,
                 'created_at'        => Carbon::now(),
                 'updated_at'        => Carbon::now(),
+            ]);
+
+            // Create Distributor User Account
+            User::create([
+                'user_id' => $Accountant->id,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'usertype' => 'Accountant',
             ]);
             return redirect()->back()->with('success', 'Accountant has been  created successfully');
         } else {
@@ -114,22 +127,30 @@ class AccountantController extends Controller
     public function Accountant_Expense()
     {
         if (Auth::id()) {
-            $userId = Auth::id();
+            $user = Auth::user(); // current user
 
-            $Accountants = Accountant::where('admin_id', '=', $userId)->with('expenses')->get();
-            $Expenses = AccountantExpense::with('accountant')->get();
-
-            // Accountant ke cash in hand ko lekar aana
-            foreach ($Accountants as $accountant) {
-                $ledger = AccountantLedger::where('accountant_id', $accountant->id)->first();
-                $accountant->cash_in_hand = $ledger ? $ledger->cash_in_hand : 0;
+            // Ledger only for accountant
+            $cashInHand = 0;
+            if ($user->usertype === 'Accountant') {
+                $ledger = AccountantLedger::where('accountant_id', $user->user_id)->latest()->first();
+                $cashInHand = $ledger ? $ledger->cash_in_hand : 0;
             }
 
-            return view('admin_panel.Accountants.accountant_expense', compact('Accountants', 'Expenses'));
+            // Expenses depending on user type
+            if ($user->usertype === 'admin') {
+                $Expenses = AccountantExpense::with('accountant')->get(); // All
+            } else {
+                $Expenses = AccountantExpense::where('accountant_id', $user->user_id)->with('accountant')->get(); // Only own
+            }
+
+            return view('admin_panel.Accountants.accountant_expense', compact('cashInHand', 'Expenses'));
         } else {
             return redirect()->back();
         }
     }
+
+
+
 
 
     public function saveExpense(Request $request)

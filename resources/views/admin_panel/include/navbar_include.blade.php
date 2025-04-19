@@ -39,6 +39,8 @@
                             <span class="navbar-user__name">Super Admin</span>
                             @elseif(Auth::check() && Auth::user()->usertype == 'staff')
                             <span class="navbar-user__name">User</span>
+                            @elseif(Auth::check() && Auth::user()->usertype == 'Accountant')
+                            <span class="navbar-user__name">Accountant</span>
                             @endif
                         </span>
                         <span class="icon"><i class="las la-chevron-circle-down"></i></span>
@@ -51,6 +53,7 @@
                         <span class="dropdown-menu__caption">Password</span>
                     </a>
                     @endif
+                    
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();"

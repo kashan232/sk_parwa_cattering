@@ -43,6 +43,8 @@
                                                 <th>CNIC</th>
                                                 <th>Number</th>
                                                 <th>Address</th>
+                                                <th>Email</th>
+                                                <th>Password</th>
                                                 <th>User Type</th>
                                                 <th>Action</th>
                                             </tr>
@@ -55,6 +57,8 @@
                                                 <td>{{ $Account->Cnic }}</td>
                                                 <td>{{ $Account->Number }}</td>
                                                 <td>{{ $Account->Address }}</td>
+                                                <td>{{ $Account->email }}</td>
+                                                <td>{{ $Account->password }}</td>
                                                 <td>
                                                     <span class="badge badge--success">{{ $Account->usertype }}</span>
                                                 </td>
@@ -91,8 +95,8 @@
                     </div>
                 </div>
                 <!-- Create Update Modal -->
-                <div class="modal fade" id="cuModal">
-                    <div class="modal-dialog" role="document">
+                <div class="modal fade bd-example-modal-lg" id="cuModal">
+                    <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title"></h5>
@@ -104,34 +108,47 @@
                             <form action="{{ route('store-Accountant') }}" method="POST">
                                 @csrf
                                 <div class="modal-body">
-                                    <div class="form-group">
-                                        <label>Name</label>
-                                        <input type="text" class="form-control" name="name" required>
-                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label>Name</label>
+                                            <input type="text" class="form-control" name="name" required>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Cnic</label>
-                                        <input type="text" class="form-control" name="Cnic" required>
-                                    </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Cnic</label>
+                                            <input type="text" class="form-control" name="Cnic" required>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Phone Number</label>
-                                        <input type="text" class="form-control" name="Number" required>
-                                    </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Phone Number</label>
+                                            <input type="text" class="form-control" name="Number" required>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Address</label>
-                                        <input type="text" class="form-control" name="Address" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Role</label>
-                                        <select name="usertype" class="form-control" required>
-                                            <option disabled selected>Select One</option>
-                                            <option value="Accountant">Accountant</option>
-                                        </select>
-                                    </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Address</label>
+                                            <input type="text" class="form-control" name="Address" required>
+                                        </div>
 
+                                        <div class="form-group col-md-6">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" name="email" required>
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Password</label>
+                                            <input type="password" class="form-control" name="password" required>
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label>Role</label>
+                                            <select name="usertype" class="form-control" required>
+                                                <option disabled selected>Select One</option>
+                                                <option value="Accountant">Accountant</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn--primary w-100 h-45">Submit</button>
                                 </div>
@@ -139,6 +156,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Edit Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Vendor;
-
+use Carbon\Carbon;
 
 class VendorController extends Controller
 {
@@ -51,18 +51,12 @@ class VendorController extends Controller
             $usertype = Auth()->user()->usertype;
             $userId = Auth::id();
             // dd($request);
-            $update_id = $request->input('customer_id');
-            $name = $request->input('customer_name');
-            $email = $request->input('customer_email');
-            $phone = $request->input('customer_phone');
-            $address = $request->input('customer_address');
-
-            Customer::where('id', $update_id)->update([
-                'customer_name'          => $name,
-                'customer_email'          => $email,
-                'customer_phone'          => $phone,
-                'customer_address'          => $address,
-                'updated_at' => Carbon::now(),
+            $vendor_id =  $request->vendor_id;
+            Vendor::where('id', $vendor_id)->update([
+                'name'          => $request->vendor_name,
+                'email'          => $request->vendor_email,
+                'phone'          => $request->vendor_phone,
+                'address'          => $request->vendor_address,
             ]);
             return redirect()->back()->with('success', 'Customer Updated Successfully');
         } else {

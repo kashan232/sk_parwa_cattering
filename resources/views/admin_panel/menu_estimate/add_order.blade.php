@@ -118,6 +118,15 @@
                                                 
                                             </div>
                                         </div>
+                                        <div class="col-xl-4 col-sm-6">
+                                            <div class="form-group">
+                                                <label>Food Type </label>
+                                                <select name="food_type" id="food_type" class="form-control bg--white" >
+                                                    <option value="Buffy">Buffy</option>
+                                                    <option value="Table">Table</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row mb-3">
