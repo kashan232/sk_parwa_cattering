@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\ItemCategory;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Models\Subcategory;
@@ -18,7 +19,7 @@ class ProductController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             // $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
-            $all_product = Product::get();
+            $all_product = ItemCategory::where('admin_or_user_id', '=', $userId)->get();
             return view('admin_panel.product.all_product', [
                 // 'all_unit' => $all_unit
                 'all_product' => $all_product,

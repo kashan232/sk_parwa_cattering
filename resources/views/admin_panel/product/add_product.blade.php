@@ -40,7 +40,7 @@
                                                     <div class="thumb">
                                                         <div class="avatar-preview">
                                                             <div class="profilePicPreview"
-                                                                style="background-image: url(https://script.viserlab.com/torylab/placeholder-image/400x400)">
+                                                                style="background-image: url(https://script.viserlab.com//placeholder-image/400x400)">
                                                                 <button type="button" class="remove-image"><i
                                                                         class="fa fa-times"></i></button>
                                                             </div>

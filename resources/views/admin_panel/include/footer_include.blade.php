@@ -185,7 +185,7 @@
 
     gtag('config', 'G-1ME4K0RD7K');
 </script>
-<script src="https://script.viserlab.com/torylab/assets/admin/js/vendor/apexcharts.min.js"></script>
+<script src="https://script.viserlab.com//assets/admin/js/vendor/apexcharts.min.js"></script>
 
 <script>
     "use strict";

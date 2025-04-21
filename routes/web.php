@@ -6,6 +6,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Sub_cat_Cotnroller;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ItemCategoryController;
+use App\Http\Controllers\ItemProductController;
 use App\Http\Controllers\KitchenInventoryController;
 use App\Http\Controllers\MenuEstimateController;
 use App\Http\Controllers\ProductController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\warehouseStockController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
@@ -203,6 +206,39 @@ Route::get('/Accountant-Ledger', [AccountantController::class, 'Accountant_Ledge
 
 Route::get('/Accountant-Expense', [AccountantController::class, 'Accountant_Expense'])->name('Accountant-Expense');
 Route::post('/save-accountant-expense', [AccountantController::class, 'saveExpense'])->name('save-accountant-expense');
+
+
+
+//category
+Route::get('/item-category', [ItemCategoryController::class, 'item_category'])->middleware(['auth','admin'])->name('item-category');
+Route::post('/item-store-category', [ItemCategoryController::class, 'item_store_category'])->name('item-store-category');
+Route::post('/item-update-category', [ItemCategoryController::class, 'item_update_category'])->name('item-update-category');
+
+Route::get('/all-item-product', [ItemProductController::class, 'all_item_product'])->middleware(['auth','admin'])->name('all-item-product');
+Route::get('/add-item-product', [ItemProductController::class, 'add_item_product'])->middleware(['auth','admin'])->name('add-item-product');
+Route::post('/store-item-product', [ItemProductController::class, 'store_item_product'])->name('store-item-product');
+Route::get('/edit-item-product/{id}', [ItemProductController::class, 'edit_item_product'])->middleware(['auth','admin'])->name('edit-item-product');
+Route::post('/update-item-product/{id}', [ItemProductController::class, 'update_item_product'])->name('update-item-product');
+Route::get('/item-product-alerts', [ItemProductController::class, 'item_product_alerts'])->name('item-product-alerts');
+Route::post('/delete-item-product', [ItemProductController::class, 'delete_item_product'])->name('delete.item-product');
+
+// warehouse stock manage
+Route::get('/warehouse-stock', [warehouseStockController::class, 'warehouse_stock'])->middleware(['auth','admin'])->name('warehouse-stock');
+Route::post('/store-warehouse-stock', [warehouseStockController::class, 'store_warehouse_stock'])->name('store-warehouse-stock');
+Route::get('/listing-warehouse-stock', [warehouseStockController::class, 'listing_warehouse_stock'])->middleware(['auth','admin'])->name('listing-warehouse-stock');
+Route::get('/product-warehouse-stock', [warehouseStockController::class, 'product_warehouse_stock'])->middleware(['auth','admin'])->name('product-warehouse-stock');
+Route::get('/get-products-by-category', [warehouseStockController::class, 'getProductsByCategory'])->name('get-products-by-category');
+Route::get('/filter-warehouse-stock', [warehouseStockController::class, 'filterWarehouseStock'])->name('filter-warehouse-stock');
+
+Route::get('/warehouse-to-shop-stock', [warehouseStockController::class, 'warehouse_to_shop_stock'])->name('warehouse-to-shop-stock');
+Route::get('/get-stock', [warehouseStockController::class, 'getStock'])->name('get-stock');
+Route::post('/store-warehouse-to-shop', [warehouseStockController::class, 'store_warehouse_to_shop'])->name('store-warehouse-to-shop');
+Route::post('/transfer-warehouse-stock', [warehouseStockController::class, 'transfer_warehouse_stock'])->name('transfer-warehouse-stock');
+Route::get('/All-Stock-Transfer', [warehouseStockController::class, 'All_Stock_Transfer'])->name('All-Stock-Transfer');
+
+Route::get('/get-items-by-category-product/{categoryId}', [warehouseStockController::class, 'getitemsbycategoryproduct'])->name('get-items-by-category-product');
+Route::get('/get-brand-by-itemproduct/{productId}', [warehouseStockController::class, 'getunitbyitemproduct'])->name('get-brand-by-itemproduct');
+
 
 Route::prefix('kitchen')->group(function () {
     Route::get('/inventory', [KitchenInventoryController::class, 'index'])->name('kitchen.inventory');

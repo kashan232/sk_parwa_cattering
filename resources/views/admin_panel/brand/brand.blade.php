@@ -15,13 +15,11 @@
             <div class="bodywrapper__inner">
 
                 <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
-                    <h6 class="page-title">Brands</h6>
+                    <h6 class="page-title">Items Brands</h6>
                     <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center breadcrumb-plugins">
-                        
                         <button type="button" class="btn btn-sm btn-outline--primary cuModalBtn"
                             data-modal_title="Add New Brand">
                             <i class="las la-plus"></i>Add New </button>
-                        
                     </div>
                 </div>
 
@@ -40,7 +38,6 @@
                                             <tr>
                                                 <th>S.N.</th>
                                                 <th>Name</th>
-                                                <th>Products</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -49,7 +46,6 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $brand->brand }}</td>
-                                                <td>{{ $brand->products_count }}</td>
                                                 <td>
                                                     <div class="button--group">
                                                         <button type="button"
@@ -57,12 +53,6 @@
                                                             data-modal_title="Edit Brand" data-has_status="1"
                                                             data-target="#editbrand" data-brand-id="{{ $brand->id }}" data-brand-name="{{ $brand->brand }}">
                                                             <i class="la la-pencil"></i>Edit </button>
-
-                                                        {{-- <button type="button"
-                                                            class="btn btn-sm btn-outline-danger  disabled  confirmationBtn"
-                                                            data-question="Are you sure to delete this brand?"
-                                                            data-action="https://script.viserlab.com/torylab/admin/brand/delete/8">
-                                                            <i class="la la-trash"></i>Delete </button> --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -150,7 +140,7 @@
                                             </small>
                                             <small>
                                                 Download sample template file from here <a
-                                                    href="https://script.viserlab.com/torylab/assets/files/sample/brand.csv"
+                                                    href="https://script.viserlab.com//assets/files/sample/brand.csv"
                                                     title="Download csv file" class="text--primary" download>
                                                     <b>csv</b>
                                                 </a>

@@ -59,7 +59,7 @@
                                                         {{-- <button type="button"
                                                             class="btn btn-sm btn-outline-danger  disabled  confirmationBtn"
                                                             data-question="Are you sure to delete this unit?"
-                                                            data-action="https://script.viserlab.com/torylab/admin/unit/delete/9">
+                                                            data-action="https://script.viserlab.com//admin/unit/delete/9">
                                                             <i class="la la-trash"></i>Delete </button> --}}
                                                     </div>
                                                 </td>
@@ -136,7 +136,7 @@
                                     <i class="la la-times" aria-hidden="true"></i>
                                 </button>
                             </div>
-                            <form method="post" action="https://script.viserlab.com/torylab/admin/unit/import"
+                            <form method="post" action="https://script.viserlab.com//admin/unit/import"
                                 id="importForm" enctype="multipart/form-data">
                                 <input type="hidden" name="_token" value="zv105s8kd1s2nyZ6nvoqU6pROYAnsCPYkYXTDlWn">
                                 <div class="modal-body">
@@ -160,7 +160,7 @@
                                             </small>
                                             <small>
                                                 Download sample template file from here <a
-                                                    href="https://script.viserlab.com/torylab/assets/files/sample/unit.csv"
+                                                    href="https://script.viserlab.com//assets/files/sample/unit.csv"
                                                     title="Download csv file" class="text--primary" download>
                                                     <b>csv</b>
                                                 </a>

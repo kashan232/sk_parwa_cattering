@@ -15,11 +15,8 @@ class BrandController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             $all_brand = Brand::where('admin_or_user_id', '=', $userId)
-                ->get()
-                ->map(function ($brands) {
-                    $brands->products_count = $brands->products()->count();
-                    return $brands;
-                });
+                ->get();
+               
                 return view('admin_panel.brand.brand', [
                     'all_brand' => $all_brand
                 ]);

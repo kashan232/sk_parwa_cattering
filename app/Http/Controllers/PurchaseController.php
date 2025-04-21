@@ -56,6 +56,8 @@ class PurchaseController extends Controller
         return response()->json($items);
     }
 
+    
+
 
     public function view($id)
     {
