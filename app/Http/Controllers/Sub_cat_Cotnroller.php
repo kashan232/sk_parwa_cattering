@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\SubCategory;
+use App\Models\Subcategory;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 

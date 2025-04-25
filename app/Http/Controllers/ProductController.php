@@ -18,11 +18,12 @@ class ProductController extends Controller
     {
         if (Auth::id()) {
             $userId = Auth::id();
-            // $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
-            $all_product = ItemCategory::where('admin_or_user_id', '=', $userId)->get();
+
+            $all_products = Product::with(['category', 'subcategory', 'unit'])
+                ->get();
+
             return view('admin_panel.product.all_product', [
-                // 'all_unit' => $all_unit
-                'all_product' => $all_product,
+                'all_products' => $all_products,
             ]);
         } else {
             return redirect()->back();
@@ -72,6 +73,21 @@ class ProductController extends Controller
         return response()->json($items);
     }
 
+    public function delete_product(Request $request)
+    {
+        if (Auth::id()) {
+            $product = Product::find($request->id);
+
+            if ($product) {
+                $product->delete();
+                return response()->json(['success' => true, 'message' => 'Product deleted successfully.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Product not found.']);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Unauthorized request.']);
+    }
+
 
 
     public function store_product(Request $request)
@@ -111,7 +127,6 @@ class ProductController extends Controller
             $all_brand = Brand::where('admin_or_user_id', '=', $userId)->get();
             $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
             $product_details = Product::findOrFail($id);
-            // dd($product_details);
             return view('admin_panel.product.edit_product', [
                 'all_category' => $all_category,
                 'all_brand' => $all_brand,
@@ -151,15 +166,12 @@ class ProductController extends Controller
                 $product->image = $imageName;
             }
 
-            // Update product details
-            $product->product_name   = $request->product_name;
-            $product->category       = $request->category;
-            $product->brand          = $request->brand;
-            $product->sku            = $request->sku;
-            $product->unit           = $request->unit;
-            $product->alert_quantity = $request->alert_quantity;
-            $product->retail_price   = $request->retail_price;  // Including retail price update
-            $product->note           = $request->note;
+            $product->name        = $request->name;
+            $product->category_id = $request->category;
+            $product->subcategory_id = $request->subcategory_id;
+            $product->unit_id     = $request->unit_id;
+            $product->price       = $request->price;
+
             $product->updated_at     = Carbon::now();
 
             // Save updated product

@@ -22,30 +22,30 @@
                 <div class="row gy-3">
                     <div class="col-lg-12 col-md-12 mb-30">
                         <div class="card">
+                        @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong>Success!</strong> {{ session('success') }}.
+                                </div>
+                                @endif
                             <div class="card-body">
                                 <form action="{{ route('store-Purchase') }}" method="POST">
                                     @csrf
                                     <div class="row mb-3">
-                                        <div class="col-xl-4 col-sm-4">
+                                        <div class="col-xl-6 col-sm-6">
                                             <div class="form-group" id="supplier-wrapper">
                                                 <label class="form-label">Supplier</label>
-                                                <select name="supplier" class="select2-basic form-control" required>
-                                                    <option selected disabled>Select One</option>
-                                                    @foreach($Suppliers as $Supplier)
-                                                    <option value="{{ $Supplier->name }}">{{ $Supplier->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <input type="text" name="supplier" class="form-control" required>
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-4 col-sm-4">
+                                        <div class="col-xl-6 col-sm-6">
                                             <div class="form-group">
                                                 <label>Date</label>
                                                 <input name="purchase_date" type="date" class="datepicker-here form-control bg--white" required>
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-4 col-sm-4">
+                                        <!-- <div class="col-xl-4 col-sm-4">
                                             <div class="form-group">
                                                 <label class="form-label">Warehouse</label>
                                                 <select name="warehouse_id" class="form-control" required>
@@ -55,7 +55,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="row mb-3">
@@ -65,7 +65,7 @@
                                                     <tr>
                                                         <th>Category</th>
                                                         <th>Name</th>
-                                                        <th>Unit</th>
+                                                        <th>brand</th>
                                                         <th>Quantity<span class="text--danger">*</span></th>
                                                         <th>Price<span class="text--danger">*</span></th>
                                                         <th>Total</th>
@@ -88,7 +88,7 @@
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <input type="text" name="unit[]" class="form-control unit" readonly> <!-- Readonly Unit column -->
+                                                            <input type="text" name="brand[]" class="form-control brand" readonly> <!-- Readonly brand column -->
                                                         </td>
                                                         <td>
                                                             <input type="number" name="quantity[]" class="form-control quantity" required>
@@ -235,23 +235,23 @@
                     }
                 }
 
-                // Event listener for product selection to populate Unit
+                // Event listener for product selection to populate brand
                 if (e.target.classList.contains('item-name')) {
                     const productId = e.target.value;
                     const row = e.target.closest('tr');
-                    const unitInput = row.querySelector('.unit');
+                    const brandInput = row.querySelector('.brand');
 
                     if (productId) {
                         fetch(`{{ route('get-unit-by-product', ':productId') }}`.replace(':productId', productId))
                             .then(response => response.json())
                             .then(product => {
-                                if (product.unit) {
-                                    unitInput.value = product.unit;
+                                if (product.brand) {
+                                    brandInput.value = product.brand;
                                 } else {
-                                    unitInput.value = ''; // Handle cases where the unit is not found
+                                    brandInput.value = ''; // Handle cases where the brand is not found
                                 }
                             })
-                            .catch(error => console.error('Error fetching unit:', error));
+                            .catch(error => console.error('Error fetching brand:', error));
 
                     }
                 }
@@ -276,7 +276,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="text" name="unit[]" class="form-control unit" readonly>
+                        <input type="text" name="brand[]" class="form-control brand" readonly>
                     </td>
                     <td>
                         <input type="number" name="quantity[]" class="form-control quantity" required>

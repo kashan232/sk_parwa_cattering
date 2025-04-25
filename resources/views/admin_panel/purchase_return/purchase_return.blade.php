@@ -86,7 +86,6 @@
                                                             <i class="la la-ellipsis-v"></i>More
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item btn btn-sm btn-outline--primary ms-1 editBtn" href="#"> <i class="la la-pen"></i> Edit</a>
                                                             <a href="#" class="dropdown-item btn btn-sm btn-outline--primary ms-1 paymentBtn"
                                                                 data-id="{{ $PurchaseReturn->id }}"
                                                                 data-invoice_no="{{ $PurchaseReturn->purchase->invoice_no }}"
@@ -95,7 +94,6 @@
                                                                 <i class="la la-money-bill-wave"></i>
                                                                 Pay
                                                             </a>
-                                                            <a class="dropdown-item btn btn-sm btn-outline--primary ms-1 editBtn" href="#"> <i class="la la-eye"></i> View</a>
                                                         </div>
                                                     </div>
                                                 </td>

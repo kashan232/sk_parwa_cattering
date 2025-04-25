@@ -30,29 +30,23 @@
                                     @csrf
                                     <!-- Invoice and Supplier Info -->
                                     <div class="row mb-3">
-                                        <div class="col-xl-3 col-sm-6">
+                                        <div class="col-xl-4 col-sm-4">
                                             <div class="form-group">
                                                 <label>Invoice No:</label>
                                                 <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
                                                 <input type="text" name="invoice_no" class="form-control" value="{{ $purchase->invoice_no }}" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-xl-3 col-sm-6">
+                                        <div class="col-xl-4 col-sm-4">
                                             <div class="form-group">
                                                 <label class="form-label">Supplier</label>
                                                 <input type="text" name="supplier" class="form-control" value="{{ $purchase->supplier }}" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-xl-3 col-sm-6">
+                                        <div class="col-xl-4 col-sm-4">
                                             <div class="form-group">
                                                 <label>Claim Date</label>
                                                 <input name="return_date" type="date" class="form-control" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-3 col-sm-6">
-                                            <div class="form-group">
-                                                <label class="form-label">Warehouse</label>
-                                                <input type="text" name="warehouse" class="form-control" value="{{ $purchase->warehouse_id }}" readonly>
                                             </div>
                                         </div>
                                     </div>

@@ -88,6 +88,9 @@ Route::post('/update-product/{id}', [ProductController::class, 'update_product']
 Route::get('/product-alerts', [ProductController::class, 'product_alerts'])->name('product-alerts');
 Route::get('/get-subcategories/{category}', [ProductController::class, 'getSubcategories'])->name('get.subcategories');
 Route::get('/get-items/{category}/{subcategory}', [ProductController::class, 'getItems'])->name('get.items');
+Route::post('/delete-product', [ProductController::class, 'delete_product'])->name('delete.product');
+
+
 //Order
 Route::get('/all-order', [OrderController::class, 'all_order'])->middleware(['auth', 'admin'])->name('all-order');
 Route::get('/add-order', [OrderController::class, 'add_order'])->middleware(['auth', 'admin'])->name('add-order');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ClaimReturn;
+use App\Models\ItemCategory;
+use App\Models\ItemProduct;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
@@ -37,11 +39,9 @@ class PurchaseController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             // dd($userId);
-            $Suppliers = Supplier::get();
             $Warehouses = Warehouse::get();
-            $Category = Category::get();
+            $Category = ItemCategory::get();
             return view('admin_panel.purchase.add_purchase', [
-                'Suppliers' => $Suppliers,
                 'Warehouses' => $Warehouses,
                 'Category' => $Category,
             ]);
@@ -52,7 +52,7 @@ class PurchaseController extends Controller
 
     public function getItemsByCategory($categoryId)
     {
-        $items = Product::where('category', $categoryId)->get(); // Adjust according to your database structure
+        $items = ItemProduct::where('category', $categoryId)->get(); // Adjust according to your database structure
         return response()->json($items);
     }
 
@@ -80,20 +80,6 @@ class PurchaseController extends Controller
     {
         // dd($request);
         // Validate the request
-        $validatedData = $request->validate([
-            'supplier' => 'required|string',
-            'purchase_date' => 'required|date',
-            'warehouse_id' => 'required|string',
-            'item_category' => 'required|array',
-            'item_name' => 'required|array',
-            'quantity' => 'required|array',
-            'price' => 'required|array',  // This is an array of prices
-            'total' => 'required|array',
-            'note' => 'nullable|string',
-            'total_price' => 'required|numeric',
-            'discount' => 'nullable|numeric',  // Ensure it's numeric
-        ]);
-
         $invoiceNo = Purchase::generateInvoiceNo();
 
         // Ensure discount is numeric and default to 0 if null
@@ -132,13 +118,12 @@ class PurchaseController extends Controller
             $purchase_price = $request->price[$key];  // Single price for the item
 
             // Find the product and update stock and wholesale price
-            $product = Product::where('product_name', $item_name)
+            $product = ItemProduct::where('product_name', $item_name)
                 ->where('category', $item_category)
                 ->first();
 
             if ($product) {
                 $product->stock += $quantity; // Increase the stock
-                $product->wholesale_price = $purchase_price;  // Set wholesale price to purchase price
                 $product->save();
             }
         }
@@ -252,7 +237,7 @@ class PurchaseController extends Controller
             // Fetch suppliers, warehouses, and categories
             $Suppliers = Supplier::get();
             $Warehouses = Warehouse::get();
-            $Category = Category::get();
+            $Category = ItemCategory::get();
 
             // Fetch the specific purchase by ID and make sure we get the item details
             $purchase = Purchase::where('id', $id)->first();
@@ -270,7 +255,7 @@ class PurchaseController extends Controller
                 // Loop through item names and fetch stock quantity from the Product table
                 foreach ($itemNames as $itemName) {
                     // Fetch product based on the product_name
-                    $product = Product::where('product_name', $itemName)->first();
+                    $product = ItemProduct::where('product_name', $itemName)->first();
 
                     if ($product) {
                         // Store stock quantity if the product is found
@@ -317,7 +302,7 @@ class PurchaseController extends Controller
         // Update stock quantities in the Product table
         foreach ($itemNames as $index => $itemName) {
             $returnQty = $returnQuantities[$index] ?? 0;
-            $product = Product::where('product_name', $itemName)->first();
+            $product = ItemProduct::where('product_name', $itemName)->first();
 
             if ($product) {
                 // Subtract the return quantity from the current stock
@@ -433,9 +418,9 @@ class PurchaseController extends Controller
 
     public function getUnitByProduct($productId)
     {
-        $product = Product::where('product_name', $productId)->first();
+        $product = ItemProduct::where('product_name', $productId)->first();
         return response()->json([
-            'unit' => $product->unit,
+            'brand' => $product->brand,
         ]);
     }
 
@@ -448,7 +433,7 @@ class PurchaseController extends Controller
             // Fetch suppliers, warehouses, and categories
             $Suppliers = Supplier::get();
             $Warehouses = Warehouse::get();
-            $Category = Category::get();
+            $Category = ItemCategory::get();
 
             // Fetch the specific purchase by ID and make sure we get the item details
             $purchase = Purchase::where('id', $id)->first();
@@ -466,7 +451,7 @@ class PurchaseController extends Controller
                 // Loop through item names and fetch stock quantity from the Product table
                 foreach ($itemNames as $itemName) {
                     // Fetch product based on the product_name
-                    $product = Product::where('product_name', $itemName)->first();
+                    $product = ItemProduct::where('product_name', $itemName)->first();
 
                     if ($product) {
                         // Store stock quantity if the product is found
@@ -514,7 +499,7 @@ class PurchaseController extends Controller
         // Update stock quantities in the Product table
         foreach ($itemNames as $index => $itemName) {
             $returnQty = $returnQuantities[$index] ?? 0;
-            $product = Product::where('product_name', $itemName)->first();
+            $product = ItemProduct::where('product_name', $itemName)->first();
 
             if ($product) {
                 // Subtract the return quantity from the current stock
@@ -585,7 +570,7 @@ class PurchaseController extends Controller
         ClaimReturn::create($ClaimReturn);
 
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Purchase return saved, stock updated, and purchase marked as returned successfully.');
+        return redirect()->back()->with('success', 'Claim return saved, stock updated, and purchase marked as returned successfully.');
     }
     public function all_purchase_return_damage_item()
     {

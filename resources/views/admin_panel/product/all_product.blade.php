@@ -31,52 +31,46 @@
                                         style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>Name | Color </th>
-                                                <th>Category | Brand</th>
-                                                <th>Stock </th>
-                                                <th>Alert Qty</th>
-                                                <th>Model</th>
-                                                <th>Wholesale Price</th>
-                                                <th>Retail Price</th>
+                                                <th>ID</th>
+                                                <th>Image</th>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Subcategory</th>
+                                                <th>Unit</th>
+                                                <th>Price</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @foreach ($all_product as $product)
-                                                <tr>
-                                                    <td class="long-text">
-                                                        <span
-                                                            class="fw-bold text--primary">{{ $product->product_name }}</span>
-                                                        <br>
-                                                        <span class="text--small ">{{ $product->color }}</span>
-                                                    </td>
-                                                    <td>
-                                                        {{ $product->category }}
-                                                        <br>
-                                                        <span class="text--primary">{{ $product->brand }}</span>
-                                                    </td>
-                                                    <td>
-                                                        {{ $product->stock }}
-                                                    </td>
-                                                    <td>
-                                                        <strong
-                                                            class="badge badge--danger">{{ $product->alert_quantity }}</strong>
-                                                    </td>
-                                                    <td>{{ $product->unit }}</td>
-                                                    <td>{{ $product->wholesale_price }}</td>
-                                                    <td>{{ $product->retail_price }}</td>
-                                                    <td>
-                                                        <div class="button--group">
-                                                            <a href="{{ route('edit-product', ['id' => $product->id]) }}"
-                                                                class="btn btn-sm btn-outline--primary ms-1 editBtn"><i
-                                                                    class="las la-pen"></i> Edit</a>
-                                                            <button class="btn btn-danger delete-product"
-                                                                data-id="{{ $product->id }}">Delete</button>
 
-                                                        </div>
-                                                    </td>
+                                        <tbody>
+                                            @foreach ($all_products as $product)
+                                            <tr>
+                                                <td>{{ $product->id }}</td>
+                                                <td>
+                                                    @if($product->image)
+                                                    <img src="{{ asset('product_images/' . $product->image) }}" alt="image" width="50">
+                                                    @else
+                                                    <span class="text-muted">No Image</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $product->name }}</td>
+                                                <td>{{ $product->category->category ?? 'N/A' }}</td>
+                                                <td>{{ $product->subcategory->name ?? 'N/A' }}</td>
+                                                <td>{{ $product->unit->unit ?? 'N/A' }}</td>
+                                               
+                                                <td>{{ $product->price }}</td>
+                                                <td>
+                                                    <div class="button--group">
+                                                        <a href="{{ route('edit-product', ['id' => $product->id]) }}" class="btn btn-sm btn-outline--primary ms-1">
+                                                            <i class="las la-pen"></i> Edit
+                                                        </a>
+                                                        <button class="btn btn-danger delete-product" data-id="{{ $product->id }}">Delete</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                             @endforeach
                                         </tbody>
+
                                     </table>
                                     <!-- table end -->
                                 </div>

@@ -286,6 +286,47 @@
             </div>
         </li>
 
+
+        <li class="sidebar-menu-item sidebar-dropdown">
+            <a href="javascript:void(0)" class="">
+                <i class="menu-icon fas fa-shopping-basket"></i>
+                <span class="menu-title">Purchase</span>
+            </a>
+            <div class="sidebar-submenu ">
+                <ul>
+                    <li class="sidebar-menu-item ">
+                        <a href="{{ route('add-purchase') }}"
+                            class="nav-link">
+                            <i class="menu-icon la la-dot-circle"></i>
+                            <span class="menu-title">Add Purchases</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item ">
+                        <a href="{{ route('Purchase') }}"
+                            class="nav-link">
+                            <i class="menu-icon la la-dot-circle"></i>
+                            <span class="menu-title">All Purchases</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item  ">
+                        <a href="{{ route('all-purchase-return') }}"
+                            class="nav-link">
+                            <i class="menu-icon la la-dot-circle"></i>
+                            <span class="menu-title">Purchases Return</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="sidebar-menu-item  ">
+            <a href="{{ route('all-purchase-return-damage-item') }}"
+                class="nav-link">
+                <i class="menu-icon la la-dot-circle"></i>
+                <span class="menu-title">Claim Returns</span>
+            </a>
+        </li>
+
         <!-- <li class="sidebar-menu-item sidebar-dropdown">
                     <a href="javascript:void(0)" class="">
                         <i class="menu-icon la la-shopping-bag"></i>

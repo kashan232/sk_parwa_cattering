@@ -17,11 +17,6 @@
 
                 <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
                     <h6 class="page-title">Claims Retunrs</h6>
-                    <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center breadcrumb-plugins">
-                        <a href="{{ route('add-purchase') }}"
-                            class="btn btn-outline--primary h-45">
-                            <i class="la la-plus"></i>Add New </a>
-                    </div>
                 </div>
 
                 <div class="row">
@@ -86,7 +81,6 @@
                                                             <i class="la la-ellipsis-v"></i>More
                                                         </button>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item btn btn-sm btn-outline--primary ms-1 editBtn" href="#"> <i class="la la-pen"></i> Edit</a>
                                                             <a href="#" class="dropdown-item btn btn-sm btn-outline--primary ms-1 paymentBtn"
                                                                 data-id="{{ $ClaimReturn->id }}"
                                                                 data-invoice_no="{{ $ClaimReturn->purchase->invoice_no }}"
@@ -95,7 +89,6 @@
                                                                 <i class="la la-money-bill-wave"></i>
                                                                 Pay
                                                             </a>
-                                                            <a class="dropdown-item btn btn-sm btn-outline--primary ms-1 editBtn" href="#"> <i class="la la-eye"></i> View</a>
                                                         </div>
                                                     </div>
                                                 </td>
