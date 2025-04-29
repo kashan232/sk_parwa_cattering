@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Vendor;
+use App\Models\VendorOrderAssign;
 use Carbon\Carbon;
 
 class VendorController extends Controller
@@ -28,14 +30,13 @@ class VendorController extends Controller
         // dd($request->toArray());
         $lastvendor = Vendor::latest('id')->first(); // Last customer ka ID find karega
         $nextId = $lastvendor ? $lastvendor->id + 1 : 1; // Agar koi customer nahi mila toh 1 set karega
-        
+
         // dd('CUST-' . str_pad($nextId, 4, '0', STR_PAD_LEFT));
         if (Auth::id()) {
             $usertype = Auth()->user()->usertype;
             $userId = Auth::id();
             Vendor::create([
                 'name'          => $request->vendor_name,
-                'email'          => $request->vendor_email,
                 'phone'          => $request->vendor_phone,
                 'address'          => $request->vendor_address,
                 'identity'          => 'Vend-' . str_pad($nextId, 4, '0', STR_PAD_LEFT),
@@ -54,7 +55,6 @@ class VendorController extends Controller
             $vendor_id =  $request->vendor_id;
             Vendor::where('id', $vendor_id)->update([
                 'name'          => $request->vendor_name,
-                'email'          => $request->vendor_email,
                 'phone'          => $request->vendor_phone,
                 'address'          => $request->vendor_address,
             ]);
@@ -64,4 +64,50 @@ class VendorController extends Controller
         }
     }
 
+    public function give_order_to_vendor()
+    {
+        if (Auth::id()) {
+            $userId = Auth::id();
+    
+            $Vendors = Vendor::get();
+            $orders = Order::where('order_status', 'confirmed')
+                ->where(function($q) {
+                    $q->whereNull('assign_status')
+                      ->orWhere('assign_status', 'Pending');
+                })->get();
+    
+            return view('admin_panel.vendor.give_vendor_order', [
+                'Vendors' => $Vendors,
+                'orders' => $orders
+            ]);
+        } else {
+            return redirect()->back();
+        }
+    }
+    
+
+    public function assign_order_to_vendor(Request $request)
+    {
+        $request->validate([
+            'vendor_id' => 'required|exists:vendors,id',
+            'order_id' => 'required|exists:orders,id',
+            'assign_date' => 'required|date',
+        ]);
+
+        // Assign Vendor to Order
+        $order = \App\Models\Order::find($request->order_id);
+        $order->assign_status = 'Assigned';
+        $order->save();
+
+        // Insert into Vendor Order Assign Table
+        VendorOrderAssign::create([
+            'vendor_id' => $request->vendor_id,
+            'order_id' => $request->order_id,
+            'assign_date' => $request->assign_date,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('give-order-to-vendor')->with('success', 'Order assigned successfully!');
+    }
 }

@@ -44,6 +44,7 @@
                                                 <th>Order Items</th>
                                                 <th>Status</th>
                                                 <th>Payment Status</th>
+                                                <th>Asiged Status</th>
                                                 <th>Order Date</th>
                                                 <th>Action</th>
                                             </tr>
@@ -95,6 +96,17 @@
                                                     <span class="badge {{ $statusColors[$order->payment_status] ?? 'bg-dark' }}">
                                                         {{ ucfirst($order->payment_status) }}
                                                     </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-success">
+                                                        {{ $order->assign_status }}
+                                                    </span>
+                                                    @if($order->vendorOrderAssign && $order->vendorOrderAssign->vendor)
+                                                    <br>
+                                                    <small class="badge bg-info mt-1">
+                                                        {{ $order->vendorOrderAssign->vendor->name }}
+                                                    </small>
+                                                    @endif
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($order->sale_date)->format('d M Y') }}</td>
                                                 <td>

@@ -12,6 +12,7 @@ use App\Models\GatePassItem;
 use App\Models\KitchenInventory;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderPayments;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Riskihajar\Terbilang\Facades\Terbilang;
@@ -20,11 +21,9 @@ class OrderController extends Controller
 {
     public function all_order()
     {
-
-        // dd("Ad");
         if (Auth::id()) {
             $userId = Auth::id();
-            $orders = Order::where('user_id', '=', $userId)->get();
+            $orders = Order::with('vendorOrderAssign.vendor')->get();
             return view('admin_panel.order.all_order', compact('orders'));
         } else {
             return redirect()->back();
@@ -114,9 +113,16 @@ class OrderController extends Controller
     public function show_voucher($id)
     {
         $order = Order::with('Customer')->findOrFail($id);
+        $orderPayments = DB::table('order_payments')
+            ->where('order_id', $id)
+            ->orderBy('payment_date', 'asc')
+            ->get();
+
         $amountInWords = ucwords(Terbilang::make($order->payable_amount)) . ' Only';
-        return view('admin_panel.order.show_voucher', compact('order', 'amountInWords'));
+
+        return view('admin_panel.order.show_voucher', compact('order', 'amountInWords', 'orderPayments'));
     }
+
 
     public function paymentUpdate(Request $request)
     {
@@ -127,6 +133,8 @@ class OrderController extends Controller
         }
 
         $paidAmount = $request->input('paid_amount', 0);
+        $purpose = $request->input('purpose', 'Payment Received');
+
         $newAdvancePaid = $order->advance_paid + $paidAmount;
         $newRemainingAmount = $order->remaining_amount - $paidAmount;
 
@@ -140,7 +148,17 @@ class OrderController extends Controller
             'payment_status' => $paymentStatus
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Payment updated successfully!']);
+        // Insert record in order_payments table
+        OrderPayments::create([
+            'order_id' => $order->id,
+            'paid_amount' => $paidAmount,
+            'payment_date' => now(),
+            'purpose' => $purpose,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Payment updated and recorded successfully!']);
     }
 
     public function save_order(Request $request)

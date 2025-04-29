@@ -37,7 +37,6 @@ class CustomerController extends Controller
             $userId = Auth::id();
             Customer::create([
                 'name'          => $request->customer_name,
-                'email'          => $request->customer_email,
                 'phone'          => $request->customer_phone,
                 'address'          => $request->customer_address,
                 'identity'          => 'CUST-' . str_pad($nextId, 4, '0', STR_PAD_LEFT),
@@ -61,7 +60,6 @@ class CustomerController extends Controller
 
             Customer::where('id', $update_id)->update([
                 'customer_name'          => $name,
-                'customer_email'          => $email,
                 'customer_phone'          => $phone,
                 'customer_address'          => $address,
                 'updated_at' => Carbon::now(),

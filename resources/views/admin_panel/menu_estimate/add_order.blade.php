@@ -80,7 +80,7 @@
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
                                                 <label>Estimate Date</label>
-                                                <input name="sale_date" type="date" class="form-control bg--white" required>
+                                                <input name="sale_date" type="date" class="form-control bg--white" value="{{ date('Y-m-d') }}" required>
                                             </div>
                                         </div>
 

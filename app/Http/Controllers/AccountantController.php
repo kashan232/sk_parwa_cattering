@@ -140,7 +140,7 @@ class AccountantController extends Controller
             if ($user->usertype === 'admin') {
                 $Expenses = AccountantExpense::with('accountant')->get(); // All
             } else {
-                $Expenses = AccountantExpense::where('accountant_id', $user->user_id)->with('accountant')->get(); // Only own
+                $Expenses = AccountantExpense::with('accountant')->get(); // Only own
             }
 
             return view('admin_panel.Accountants.accountant_expense', compact('cashInHand', 'Expenses'));

@@ -17,7 +17,7 @@ class ItemProductController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             // $all_unit = Unit::where('admin_or_user_id', '=', $userId)->get();
-            $all_product = ItemProduct::where('admin_or_user_id', '=', $userId)->get();
+            $all_product = ItemProduct::get();
             return view('admin_panel.item_products.all_product', [
                 // 'all_unit' => $all_unit
                 'all_product' => $all_product,

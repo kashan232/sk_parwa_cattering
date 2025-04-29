@@ -98,7 +98,7 @@ class warehouseStockController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             // dd($userId);
-            $WarehouseStocks = WarehouseStock::where('admin_or_user_id', '=', $userId)->get();
+            $WarehouseStocks = WarehouseStock::get();
             return view('admin_panel.warehousestock.listing_warehouse_stock', [
                 'WarehouseStocks' => $WarehouseStocks
             ]);

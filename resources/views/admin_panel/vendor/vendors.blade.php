@@ -50,7 +50,7 @@
                                                 <th>S.N.</th>
                                                 <th>Name</th>
                                                 <th>Unique Identity</th>
-                                                <th>Phone | Email</th>
+                                                <th>Phone </th>
                                                 <th>Address</th>
                                                 <th>Action</th>
                                             </tr>
@@ -61,7 +61,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $Vendor->name }}</td>
                                                 <td>{{ $Vendor->identity }}</td>
-                                                <td>{{ $Vendor->phone }}<br>{{ $Vendor->email }}</td>
+                                                <td>{{ $Vendor->phone }}</td>
                                                 <td>{{ $Vendor->address }}</td>
                                                 {{-- <td><strong>{{ $Customer->closing_balance ?? '0' }}</strong></td> <!-- Display the closing balance --> --}}
                                                 <td>
@@ -70,7 +70,6 @@
                                                             data-bs-toggle="modal" data-bs-target="#exampleModal"
                                                             data-id="{{ $Vendor->id }}"
                                                             data-name="{{ $Vendor->name }}"
-                                                            data-email="{{ $Vendor->email }}"
                                                             data-phone="{{ $Vendor->phone }}"
                                                             data-address="{{ $Vendor->address }}">
                                                             <i class="la la-pencil"></i>Edit
@@ -103,10 +102,6 @@
                                     <div class="form-group">
                                         <label>Name</label>
                                         <input type="text" class="form-control" name="vendor_name" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" class="form-control" name="vendor_email">
                                     </div>
                                     <div class="form-group">
                                         <label>Mobile</label>
@@ -143,10 +138,6 @@
                                         <input type="text" class="form-control" name="vendor_name" id="edit_vendor_name">
                                     </div>
                                     <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" class="form-control" name="vendor_email" id="edit_vendor_email">
-                                    </div>
-                                    <div class="form-group">
                                         <label>Mobile</label>
                                         <input type="text" class="form-control" name="vendor_phone" id="edit_vendor_phone">
                                     </div>
@@ -173,7 +164,6 @@
             const button = $(this);
             $('#edit_vendor_id').val(button.data('id'));
             $('#edit_vendor_name').val(button.data('name'));
-            $('#edit_vendor_email').val(button.data('email'));
             $('#edit_vendor_phone').val(button.data('phone'));
             $('#edit_vendor_address').val(button.data('address'));
         });

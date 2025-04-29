@@ -5,20 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\MenuEstimate;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MenuEstimateController extends Controller
 {
-    
+
     public function all_menu()
     {
 
         // dd("Ad");
         if (Auth::id()) {
             $userId = Auth::id();
-            $orders = MenuEstimate::where('user_id', '=', $userId)->get();
+            $orders = MenuEstimate::get();
             return view('admin_panel.menu_estimate.all_order', compact('orders'));
         } else {
             return redirect()->back();
@@ -86,4 +88,65 @@ class MenuEstimateController extends Controller
         return view('admin_panel.menu_estimate.invoice', compact('order'));
     }
 
+    public function confirmOrder(Request $request)
+    {
+        $estimateId = $request->estimate_id;
+
+        DB::beginTransaction();
+
+        try {
+            // Find estimate
+            $estimate = MenuEstimate::findOrFail($estimateId);
+
+            // Directly create new order, no check for existing orders
+            $order = new Order();
+            $order->user_id = $estimate->user_id;
+            $order->customer_name = $estimate->customer_name;
+            $order->sale_date = $estimate->sale_date;
+            $order->delivery_date = $estimate->delivery_date;
+            $order->event_type = $estimate->event_type;
+            $order->Venue = $estimate->Venue;
+            $order->person_program = $estimate->person_program;
+            $order->item_category = $estimate->item_category;
+            $order->item_subcategory = $estimate->item_subcategory;
+            $order->item_name = $estimate->item_name;
+            $order->unit = $estimate->unit;
+            $order->quantity = $estimate->quantity;
+            $order->price = $estimate->price;
+            $order->total = $estimate->total;
+            $order->total_price = $estimate->total_price;
+
+            // Default values
+            $order->order_name = null;
+            $order->delivery_time = null;
+            $order->special_instructions = null;
+            $order->note = null;
+            $order->discount = 0;
+            $order->payable_amount = $estimate->total_price;
+            $order->advance_paid = 0;
+            $order->remaining_amount = $estimate->total_price;
+            $order->order_status = 'confirmed';
+            $order->payment_status = 'pending';
+            $order->order_type = 'menu';
+
+            $order->save();
+
+            // Update estimate status to "Confirmed" (you were using 1, that's fine if 1 means Confirmed in your system)
+            $estimate->status = '1';
+            $estimate->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Order confirmed successfully!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

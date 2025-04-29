@@ -15,7 +15,7 @@ class WarehouseController extends Controller
         if (Auth::id()) {
             $userId = Auth::id();
             // dd($userId);
-            $Warehousses = Warehouse::where('admin_or_user_id', '=', $userId)->get();
+            $Warehousses = Warehouse::get();
             return view('admin_panel.warehouse.warehouse', [
                 'Warehousses' => $Warehousses
             ]);

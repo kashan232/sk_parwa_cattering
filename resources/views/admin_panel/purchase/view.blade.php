@@ -47,7 +47,7 @@
                         <div class="col-12 text-center mb-4">
                             <!-- Logo Section -->
                             <img src="{{ asset('assets\images\logo.jpg') }}" alt="Company Logo" class="mb-3" style="max-width: 150px;">
-                            <h2>Purchase Invoice</h2>
+                            <h2>Purchase Order</h2>
                         </div>
                     </div>
                     <div class="row">

@@ -35,6 +35,7 @@
                                                 <th>Total Amount</th>
                                                 <th>Order Items</th>
                                                 <th>Order Date</th>
+                                                <th>Status</th> <!-- ADD Status Column -->
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -60,9 +61,29 @@
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($order->sale_date)->format('d M Y') }}</td>
                                                 <td>
+                                                    @if($order->status == 1)
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                    @else
+                                                    <span class="badge bg-warning">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td>
                                                     <a href="{{ route('menu.invoice.show', $order->id) }}" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-file-invoice"></i> Invoice
                                                     </a>
+
+                                                    @if($order->status != 1)
+                                                    <a href="javascript:void(0)"
+                                                        class="btn btn-danger btn-sm confirm-order-btn"
+                                                        data-id="{{ $order->id }}">
+                                                        <i class="fas fa-check"></i> Confirm Order
+                                                    </a>
+                                                    @else
+                                                    <button class="btn btn-success btn-sm" disabled>
+                                                        <i class="fas fa-check"></i> Order Confirmed
+                                                    </button>
+                                                    @endif
+
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -79,3 +100,51 @@
         </div>
     </div>
     @include('admin_panel.include.footer_include')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.confirm-order-btn').click(function() {
+                var estimateId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to confirm this order?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Confirm!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('menu.confirm.order') }}",
+                            method: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                estimate_id: estimateId
+                            },
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    Swal.fire(
+                                        'Confirmed!',
+                                        response.message,
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(); // Refresh page after success
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>

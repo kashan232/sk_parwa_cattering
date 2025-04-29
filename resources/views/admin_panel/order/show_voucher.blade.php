@@ -10,6 +10,7 @@
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         border: 2px solid #000;
     }
+
     .invoice-header {
         display: flex;
         align-items: center;
@@ -18,64 +19,80 @@
         padding-bottom: 20px;
         margin-bottom: 20px;
     }
+
     .invoice-header img {
         max-width: 120px;
     }
+
     .invoice-header .header-text {
         text-align: right;
         flex-grow: 1;
     }
+
     .invoice-header h1 {
         font-size: 26px;
         font-weight: bold;
         margin: 0;
     }
+
     .invoice-header h2 {
         font-size: 20px;
         font-weight: bold;
         margin: 5px 0;
     }
+
     .invoice-header p {
         font-size: 16px;
         margin: 5px 0;
     }
+
     .invoice-body {
         font-size: 16px;
     }
+
     .invoice-table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
     }
-    .invoice-table th, .invoice-table td {
+
+    .invoice-table th,
+    .invoice-table td {
         border: 2px solid #000;
         padding: 10px;
         text-align: left;
         font-weight: normal;
         word-break: keep-all;
     }
+
     .invoice-footer {
         margin-top: 30px;
         text-align: center;
     }
+
     .signature {
         margin-top: 50px;
         text-align: right;
         font-weight: bold;
     }
+
     @media print {
         body * {
             visibility: hidden;
         }
-        .invoice-container, .invoice-container * {
+
+        .invoice-container,
+        .invoice-container * {
             visibility: visible;
         }
+
         .invoice-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
         }
+
         .invoice-footer {
             display: none;
         }
@@ -113,22 +130,38 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php $serial = 1; @endphp
                             <tr>
-                                <td>1</td>
+                                <td>{{ $serial }}</td>
                                 <td>
-                                    <strong>Received Amount Rs</strong> {{ $amountInWords }} Against 
+                                    <strong>Received Amount Rs</strong> {{ $amountInWords }} Against
                                     {{ $order->event_type }} Program Date ({{ $order->delivery_date }})<br>
                                     <strong>Program Venue:</strong> {{ $order->Venue }}
                                 </td>
                                 <td>{{ number_format($order->payable_amount, 2) }}</td>
                             </tr>
+                            @foreach($orderPayments as $payment)
+                            <tr>
+                                <td>{{ $serial++ }}</td>
+                                <td>
+                                    Payment Received on {{ \Carbon\Carbon::parse($payment->payment_date)->format('d M, Y') }}
+                                </td>
+                                <td>{{ number_format($payment->paid_amount, 2) }}</td>
+                            </tr>
+                            @endforeach
                         </tbody>
+
                         <tfoot>
                             <tr>
                                 <td colspan="2"><strong>Paid Amount:</strong></td>
                                 <td><strong>{{ number_format($order->advance_paid, 2) }}</strong></td>
                             </tr>
+                            <tr>
+                                <td colspan="2"><strong>Remaining Amount:</strong></td>
+                                <td><strong>{{ number_format($order->payable_amount - $order->advance_paid, 2) }}</strong></td>
+                            </tr>
                         </tfoot>
+
                     </table>
                     <p><strong>In Words:</strong> {{ $amountInWords }}</p>
                     <div class="signature">Authorized Signature: __________________</div>

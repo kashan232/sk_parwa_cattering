@@ -107,12 +107,22 @@
                                     <option value="Packaging & Disposable">Packaging & Disposable Items</option>
                                     <option value="Event Setup">Event Setup & Decoration</option>
                                     <option value="Miscellaneous">Miscellaneous</option>
+                                    <option value="Others">Others</option>
                                 </select>
                             </div>
-
+                            @php
+                            $today = date('Y-m-d');
+                            @endphp
                             <div class="form-group">
                                 <label>Date</label>
-                                <input type="date" class="form-control" name="expense_date" required>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    name="expense_date"
+                                    required
+                                    value="{{ $today }}"
+                                    min="{{ $today }}"
+                                    max="{{ $today }}">
                             </div>
 
                             <div class="form-group">

@@ -1,4 +1,3 @@
-<!-- meta tags and other links -->
 @include('admin_panel.include.header_include')
 
 <body>
@@ -14,7 +13,10 @@
         <div class="body-wrapper">
             <div class="bodywrapper__inner">
                 <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
-                    <h6 class="page-title">Low Stock Prodcts</h6>
+                    <h6 class="page-title">Orders Delivery Alerts</h6>
+                    <span class="badge badge-warning">
+                        Orders Alert: {{ $ordersAlertCount }} orders with delivery within 5 days.
+                    </span>
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
@@ -24,31 +26,17 @@
                                     <table id="example" class="display  table table--light style--two bg--white" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>Image</th>
-                                                <th>Product Name</th>
-                                                <th>Stock</th>
-                                                <th>Alert Quantity</th>
+                                                <th>Order ID</th>
+                                                <th>Customer Name</th>
+                                                <th>Delivery Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($lowStockProducts as $product)
+                                            @foreach($ordersWithAlert as $order)
                                             <tr>
-                                                <td>
-                                                    <img
-                                                        src="{{ asset('product_images/' . $product->image) }}"
-                                                        alt="Product Image" style="max-width: 100px;">
-                                                </td>
-                                                <td>{{ $product->product_name }}</td>
-                                                <td>
-                                                    <span class="bg--danger px-2 rounded">
-                                                        {{ $product->stock }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="bg--warning px-2 rounded">
-                                                        {{ $product->alert_quantity }}
-                                                    </span>
-                                                </td>
+                                                <td>{{ $order->id }}</td>
+                                                <td>{{ $order->customer_name }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($order->delivery_date)->format('d-m-Y') }}</td>
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -63,3 +51,4 @@
         </div>
     </div>
     @include('admin_panel.include.footer_include')
+</body>

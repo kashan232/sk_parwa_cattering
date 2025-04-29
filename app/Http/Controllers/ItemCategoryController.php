@@ -14,8 +14,7 @@ class ItemCategoryController extends Controller
     {
         if (Auth::id()) {
             $userId = Auth::id();
-            $all_categories = ItemCategory::where('admin_or_user_id', '=', $userId)
-                ->get();
+            $all_categories = ItemCategory::get();
                 
     
             return view('admin_panel.item_category.item_category', [

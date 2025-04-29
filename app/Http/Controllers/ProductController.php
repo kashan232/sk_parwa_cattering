@@ -11,6 +11,7 @@ use App\Models\Subcategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -210,10 +211,28 @@ class ProductController extends Controller
     {
         if (Auth::id()) {
             $userId = Auth::id();
-            $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
-            // dd($lowStockProducts);
+
+            // Get today's date
+            $today = \Carbon\Carbon::today();
+
+            // Get the date 5 days later without modifying the original `$today`
+            $fiveDaysLater = $today->copy()->addDays(5);
+
+            // Orders with delivery date within the next 5 days
+            $ordersAlertCount = DB::table('orders')
+                ->whereRaw('DATE(delivery_date) <= ?', [$fiveDaysLater->toDateString()])
+                ->whereRaw('DATE(delivery_date) >= ?', [$today->toDateString()])
+                ->count();
+
+            // Get all orders with delivery date within the next 5 days for display
+            $ordersWithAlert = DB::table('orders')
+                ->whereRaw('DATE(delivery_date) <= ?', [$fiveDaysLater->toDateString()])
+                ->whereRaw('DATE(delivery_date) >= ?', [$today->toDateString()])
+                ->get();
+
             return view('admin_panel.product.product_alerts', [
-                'lowStockProducts' => $lowStockProducts,
+                'ordersAlertCount' => $ordersAlertCount,
+                'ordersWithAlert' => $ordersWithAlert,
             ]);
         } else {
             return redirect()->back();
