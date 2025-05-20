@@ -31,7 +31,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Estimate ID</th>
-                                                <th>Customer Name</th>
+                                                <th> Name | Mobile | Reference</th>
                                                 <th>Total Amount</th>
                                                 <th>Order Items</th>
                                                 <th>Order Date</th>
@@ -47,6 +47,10 @@
                                                 </td>
                                                 <td class="long-text">
                                                     <span class="fw-bold text--primary">{{ $order->customer_name }}</span>
+                                                    <br>
+                                                    <span class="fw-bold text--primary">{{ $order->mobile_number }}</span>
+                                                    <br>
+                                                    <span class="fw-bold text--primary">{{ $order->reference_name }}</span>
                                                 </td>
                                                 <td>{{ number_format($order->total_price, 2) }}</td>
                                                 <td>
@@ -73,6 +77,9 @@
                                                     </a>
 
                                                     @if($order->status != 1)
+                                                    <a href="{{ route('menu.edit.estimate', $order->id) }}" class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </a>
                                                     <a href="javascript:void(0)"
                                                         class="btn btn-danger btn-sm confirm-order-btn"
                                                         data-id="{{ $order->id }}">
@@ -83,6 +90,7 @@
                                                         <i class="fas fa-check"></i> Order Confirmed
                                                     </button>
                                                     @endif
+
 
                                                 </td>
                                             </tr>

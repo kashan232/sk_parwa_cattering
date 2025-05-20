@@ -1,6 +1,6 @@
 <!-- meta tags and other links -->
 @include('admin_panel.include.header_include')
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <body>
     <!-- page-wrapper start -->
     <div class="page-wrapper default-version">
@@ -35,6 +35,7 @@
                                     <table id="example" class="display table table--light style--two bg--white" style="width:100%">
                                         <thead>
                                             <tr>
+                                                <th>Order No#</th>
                                                 <th>Customer Name | Customer ID</th>
                                                 <th>Advance</th>
                                                 <th>Remaining</th>
@@ -46,12 +47,14 @@
                                                 <th>Payment Status</th>
                                                 <th>Asiged Status</th>
                                                 <th>Order Date</th>
+                                                <th>Program Date | Time</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($orders as $order)
                                             <tr>
+                                                <td>{{ $order->id }}</td>
                                                 <td class="long-text">
                                                     <span class="fw-bold text--primary">{{ $order->customer_name }}</span>
                                                     <br>
@@ -98,21 +101,39 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-success">
-                                                        {{ $order->assign_status }}
-                                                    </span>
-                                                    @if($order->vendorOrderAssign && $order->vendorOrderAssign->vendor)
+                                                    @if($order->vendorOrderAssigns->isNotEmpty())
                                                     <br>
                                                     <small class="badge bg-info mt-1">
-                                                        {{ $order->vendorOrderAssign->vendor->name }}
+                                                        Assigned Vendors:
                                                     </small>
+                                                    <ul class="mt-1" style="padding-left: 10px;">
+                                                        @foreach($order->vendorOrderAssigns as $assignment)
+                                                        @if($assignment->vendor)
+                                                        <li>{{ $assignment->vendor->name }}</li>
+                                                        @endif
+                                                        @endforeach
+                                                    </ul>
+                                                    @else
+                                                    <span class="badge bg-warning">No Vendor Assigned</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ \Carbon\Carbon::parse($order->sale_date)->format('d M Y') }}</td>
                                                 <td>
+                                                    {{ \Carbon\Carbon::parse($order->delivery_date)->format('d M Y') }}
+                                                        <br>
+                                                    {{ \Carbon\Carbon::parse($order->delivery_time)->format('h:i:s A') }}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#assignVendorsModal"
+                                                        data-order-id="{{ $order->id }}">
+                                                        <i class="fas fa-user-tag"></i> Assign Vendors
+                                                    </button>
                                                     <a href="{{ route('invoice.show', $order->id) }}" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-file-invoice"></i> Invoice
                                                     </a>
+                                                    @if($order->payment_status != 'Paid')
                                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                                                         data-bs-target="#paymentModal"
                                                         data-id="{{ $order->id }}"
@@ -120,6 +141,8 @@
                                                         data-paid="{{ $order->advance_paid }}">
                                                         <i class="fas fa-dollar-sign"></i> Payment
                                                     </button>
+                                                    @endif
+
                                                     <a href="{{ route('Voucher.show', $order->id) }}" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-file-invoice"></i> Payment Voucher
                                                     </a>
@@ -129,6 +152,13 @@
                                                         data-order-id="{{ $order->id }}">
                                                         <i class="fas fa-truck"></i> Get Pass
                                                     </button>
+                                                    <!-- Order Status Update Button -->
+                                                    <button class="btn btn-info btn-sm update-status-btn"
+                                                        data-order-id="{{ $order->id }}"
+                                                        data-current-status="{{ $order->order_status }}">
+                                                        <i class="fas fa-sync"></i> Update Status
+                                                    </button>
+
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -144,7 +174,25 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="assignVendorsModal" tabindex="-1" aria-labelledby="assignVendorsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignVendorsModalLabel">Assigned Vendors and Quantities</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="vendorAssignmentsContent" class="p-3">
+                        <!-- Vendor Assignments Data will be dynamically populated here -->
+                        <p class="text-center">Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Payment Modal -->
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -219,6 +267,10 @@
 
 
     @include('admin_panel.include.footer_include')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var paymentModal = document.getElementById("paymentModal");
@@ -257,13 +309,35 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert("Payment Successfully Updated");
-                            location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: data.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
                         } else {
-                            alert("Error: " + data.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message,
+                                confirmButtonColor: '#d33'
+                            });
                         }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Request Failed',
+                            text: 'Something went wrong while processing the payment!',
+                            confirmButtonColor: '#d33'
+                        });
+                        console.error('Error:', error);
                     });
             });
+
         });
     </script>
 
@@ -315,6 +389,103 @@
             </tr>
         `;
                 inventorySelection.innerHTML += newRow;
+            });
+        });
+
+        $(document).ready(function() {
+            $('.update-status-btn').click(function() {
+                let orderId = $(this).data('order-id');
+
+                Swal.fire({
+                    title: 'Change Order Status',
+                    input: 'select',
+                    inputOptions: {
+                        Confirmed: 'Confirmed',
+                        Preparing: 'Preparing',
+                        Delivered: 'Delivered',
+                        Cancelled: 'Cancelled'
+                    },
+                    inputPlaceholder: 'Select status',
+                    showCancelButton: true,
+                    confirmButtonText: 'Update',
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        let selectedStatus = result.value;
+
+                        // Send AJAX request
+                        $.ajax({
+                            url: "{{ route('order.updateStatus') }}",
+                            method: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                order_id: orderId,
+                                status: selectedStatus
+                            },
+                            success: function(response) {
+                                Swal.fire('Success', 'Order status updated!', 'success').then(() => {
+                                    location.reload(); // Refresh table
+                                });
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Something went wrong!', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const assignVendorsModal = document.getElementById('assignVendorsModal');
+
+            assignVendorsModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const orderId = button.getAttribute('data-order-id');
+                const vendorAssignmentsContent = document.getElementById('vendorAssignmentsContent');
+
+                console.log('Order ID:', orderId);
+
+                vendorAssignmentsContent.innerHTML = '<p class="text-center">Loading...</p>';
+
+                axios.post('{{ route("fetch-vendor-assignments") }}', {
+                        order_id: orderId
+                    })
+                    .then(response => {
+                        console.log('Response Data:', response.data);
+
+                        const assignments = response.data.assignments;
+
+                        if (assignments.length > 0) {
+                            let htmlContent = `
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Vendor Name</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                            assignments.forEach(assignment => {
+                                htmlContent += `
+                            <tr>
+                                <td>${assignment.vendor_name}</td>
+                                <td>${assignment.item_name}</td>
+                                <td>${assignment.quantity}</td>
+                            </tr>`;
+                            });
+
+                            htmlContent += `</tbody></table>`;
+                            vendorAssignmentsContent.innerHTML = htmlContent;
+                        } else {
+                            vendorAssignmentsContent.innerHTML = '<p class="text-center text-muted">No assignments found for this order.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error Fetching Assignments:', error);
+                        vendorAssignmentsContent.innerHTML = '<p class="text-center text-danger">Error fetching assignments.</p>';
+                    });
             });
         });
     </script>

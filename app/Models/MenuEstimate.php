@@ -12,4 +12,13 @@ class MenuEstimate extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+
+     public function subcategories()
+    {
+        $categoryIds = json_decode($this->item_subcategory, true);
+
+        return Subcategory::whereIn('id', $categoryIds)->get();
+    }
+
 }

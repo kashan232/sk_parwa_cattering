@@ -75,8 +75,8 @@ class HomeController extends Controller
 
                 // $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
                 // dd($lowStockProducts);
-                return view('Super_admin.superadmin_dashboard', compact('totalPurchasesPrice', 'subcategories','totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
-            }else if ($usertype == 'admin') {
+                return view('Super_admin.superadmin_dashboard', compact('totalPurchasesPrice', 'subcategories', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
+            } else if ($usertype == 'admin') {
                 $userId = Auth::id();
                 $totalPurchasesPrice = \App\Models\Purchase::sum('total_price');
                 $totalPurchaseReturnsPrice = \App\Models\PurchaseReturn::sum('total_price');
@@ -105,8 +105,9 @@ class HomeController extends Controller
 
                 // $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
                 // dd($lowStockProducts);
-                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'subcategories','totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
-            }if ($usertype == 'Accountant') {
+                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'subcategories', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
+            }
+            if ($usertype == 'Accountant') {
                 // Fetch all categories for the dropdown
                 $accountant = Auth::user();
 
@@ -142,41 +143,37 @@ class HomeController extends Controller
 
     public function updte_change_Password(Request $request)
     {
-        if (Auth::id()) {
-            // dd($request);
-            // Validate the form data
-            $request->validate([
-                'old_password' => 'required',
-                'new_password' => 'required|min:8',
-                'retype_new_password' => 'required|same:new_password'
-            ]);
-
-            // Get the current authenticated user
-            $user = Auth::user();
-            // dd($user);
-            // Check if the old password matches
-            if (!Hash::check($request->input('old_password'), $user->password)) {
-                return redirect()->back()->withErrors(['old_password' => 'Old password is incorrect']);
-            }
-
-            // Check if the user is an admin
-            if ($user->usertype !== 'admin') {
-                return redirect()->back()->withErrors(['error' => 'Unauthorized action']);
-            }
-
-            // Update the password
-            $user->password = Hash::make($request->input('new_password'));
-            $user->save();
-
-            // Add a success message to the session
-            Session::flash('success', 'Password changed successfully');
-
-            // Redirect back with success message
-            return redirect()->back();
-        } else {
-            return redirect()->back();
+        if (!Auth::check()) {
+            return redirect()->back()->withErrors(['error' => 'User not authenticated']);
         }
+
+        // Validate input
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:8',
+            'retype_new_password' => 'required|same:new_password',
+        ]);
+
+        $user = Auth::user();
+
+        // Ensure only admin can change password
+        if ($user->usertype !== 'admin') {
+            return redirect()->back()->withErrors(['error' => 'Unauthorized action']);
+        }
+
+        // Verify old password
+        if (!Hash::check($request->old_password, $user->password)) {
+            return redirect()->back()->withErrors(['old_password' => 'Old password is incorrect']);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Flash success message
+        return redirect()->back()->with('success', 'Password changed successfully');
     }
+
 
     // Staff work 
 

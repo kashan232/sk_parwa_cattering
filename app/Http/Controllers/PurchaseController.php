@@ -13,6 +13,7 @@ use App\Models\StaffSalary;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\Warehouse;
+use App\Models\WarehouseProductStock;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,7 @@ class PurchaseController extends Controller
         return response()->json($items);
     }
 
-    
+
 
 
     public function view($id)
@@ -78,17 +79,14 @@ class PurchaseController extends Controller
 
     public function store_Purchase(Request $request)
     {
-        // dd($request);
-        // Validate the request
+        // Generate invoice number
         $invoiceNo = Purchase::generateInvoiceNo();
 
-        // Ensure discount is numeric and default to 0 if null
-        $discount = (float) $request->discount ?? 0;
-
-        // Ensure total_price is numeric as well
+        // Ensure discount and total price are numeric
+        $discount = (float) ($request->discount ?? 0);
         $totalPrice = (float) $request->total_price;
 
-        // Prepare data for storage
+        // Save purchase data
         $purchaseData = [
             'invoice_no' => $invoiceNo,
             'supplier' => $request->supplier,
@@ -97,38 +95,47 @@ class PurchaseController extends Controller
             'item_category' => json_encode($request->item_category),
             'item_name' => json_encode($request->item_name),
             'quantity' => json_encode($request->quantity),
-            'price' => json_encode($request->price),  // Array of prices
+            'price' => json_encode($request->price),
             'total' => json_encode($request->total),
             'note' => $request->note,
             'total_price' => $totalPrice,
             'discount' => $discount,
-            'Payable_amount' => $totalPrice - $discount, // Correct subtraction with numeric values
+            'Payable_amount' => $totalPrice - $discount,
             'paid_amount' => $request->paid_amount,
             'due_amount' => $request->due_amount,
-
         ];
 
-        // Save purchase data
         $purchase = Purchase::create($purchaseData);
 
-        // Step 2: Update Product Stock and Wholesale Price
+        // Only update warehouse-wise stock (not product table)
         foreach ($request->item_name as $key => $item_name) {
             $item_category = $request->item_category[$key];
             $quantity = $request->quantity[$key];
-            $purchase_price = $request->price[$key];  // Single price for the item
+            $brand = $request->brand[$key] ?? 'N/A';
+            $warehouseId = $request->warehouse_id;
 
-            // Find the product and update stock and wholesale price
-            $product = ItemProduct::where('product_name', $item_name)
+            // Update or insert into warehouse_product_stocks
+            $warehouseStock = WarehouseProductStock::where('warehouse_name', $warehouseId)
+                ->where('product_name', $item_name)
                 ->where('category', $item_category)
+                ->where('brand', $brand)
                 ->first();
 
-            if ($product) {
-                $product->stock += $quantity; // Increase the stock
-                $product->save();
+            if ($warehouseStock) {
+                $warehouseStock->quantity += $quantity;
+                $warehouseStock->save();
+            } else {
+                WarehouseProductStock::create([
+                    'warehouse_id' => $warehouseId,
+                    'product_name' => $item_name,
+                    'category' => $item_category,
+                    'brand' => $brand,
+                    'quantity' => $quantity,
+                ]);
             }
         }
 
-        return redirect()->back()->with('success', 'Purchase saved successfully and stock updated.');
+        return redirect()->back()->with('success', 'Purchase saved successfully and warehouse stock updated.');
     }
 
 

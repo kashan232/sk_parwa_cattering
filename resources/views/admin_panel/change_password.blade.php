@@ -20,15 +20,11 @@
                 </div>
                 <div class="row mb-none-30">
                     <div class="col-lg-3 col-md-3 mb-30">
-
                         <div class="card b-radius--5 overflow-hidden">
                             <div class="card-body p-0">
                                 <div class="d-flex p-3 bg--primary align-items-center">
-                                    <div class="avatar avatar--lg">
-                                        <img src="/assets/admin/images/user.png" alt="Image">
-                                    </div>
                                     <div class="ps-3">
-                                        <h4 class="text--white">Super Admin</h4>
+                                        <h4 class="text--white">Admin</h4>
                                     </div>
                                 </div>
                                 <ul class="list-group">
@@ -49,6 +45,12 @@
                     <div class="col-lg-9 col-md-9 mb-30">
                         <div class="card">
                             <div class="card-body">
+
+                                @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong>Success!</strong> {{ session('success') }}
+                                </div>
+                                @endif
                                 <h5 class="card-title mb-4 border-bottom pb-2">Change Password</h5>
 
                                 <form action="{{ route('updte-change-Password') }}" method="POST" enctype="multipart/form-data">

@@ -65,6 +65,11 @@
                                     <strong>Error!</strong> {{ session('error') }}.
                                 </div>
                                 @endif
+                                @if (session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong>Success!</strong> {{ session('success') }}.
+                                </div>
+                                @endif
                                 <form action="{{ route('store-menu') }}" method="POST">
                                     @csrf
                                     <div class="row mb-3">
@@ -105,7 +110,7 @@
 
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
-                                                <label>Person Program</label>
+                                                <label>No Of Guest</label>
                                                 <input type="number" name="person_program" class="form-control bg--white" required>
                                                 
                                             </div>
@@ -120,11 +125,27 @@
                                         </div>
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
-                                                <label>Food Type </label>
+                                                <label>Service Type </label>
                                                 <select name="food_type" id="food_type" class="form-control bg--white" >
                                                     <option value="Buffy">Buffy</option>
                                                     <option value="Table">Table</option>
                                                 </select>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-xl-4 col-sm-6">
+                                            <div class="form-group">
+                                                <label>Mobile Number</label>
+                                                <input type="number" name="mobile_number" class="form-control bg--white" required>
+                                                
+                                            </div>
+                                        </div>
+
+                                         <div class="col-xl-4 col-sm-6">
+                                            <div class="form-group">
+                                                <label>Reference Name</label>
+                                                <input type="text" name="reference_name" class="form-control bg--white" required>
+                                                
                                             </div>
                                         </div>
                                     </div>

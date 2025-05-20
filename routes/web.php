@@ -99,7 +99,9 @@ Route::post('/store-order', [OrderController::class, 'store_order'])->name('stor
 Route::get('/invoice/{id}', [OrderController::class, 'show'])->name('invoice.show');
 Route::post('/order/payment', [OrderController::class, 'paymentUpdate'])->name('order.payment');
 Route::get('/Voucher/{id}', [OrderController::class, 'show_voucher'])->name('Voucher.show');
-
+Route::post('/order/update-status', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
+// web.php
+Route::post('/fetch-vendor-assignments', [OrderController::class, 'fetchVendorAssignments'])->name('fetch-vendor-assignments');
 Route::post('/save-order', [OrderController::class, 'save_order'])->name('save.order');
 
 Route::get('/online-order', [OrderController::class, 'online_order'])->name('online-order');
@@ -119,6 +121,8 @@ Route::get('/add-menu', [MenuEstimateController::class, 'add_menu'])->name('add-
 Route::post('/store-menu', [MenuEstimateController::class, 'store_menu'])->name('store-menu');
 Route::get('/menu-invoice/{id}', [MenuEstimateController::class, 'show'])->name('menu.invoice.show');
 Route::post('/menu-estimate/confirm-order', [MenuEstimateController::class, 'confirmOrder'])->name('menu.confirm.order');
+Route::get('/menu/edit-estimate/{id}', [MenuEstimateController::class, 'edit'])->name('menu.edit.estimate');
+Route::put('/menu-estimate/{id}', [MenuEstimateController::class, 'update_menu'])->name('menu-estimate.update');
 
 
 // Route::post('/store-product', [ProductController::class, 'store_product'])->name('store-product');
@@ -246,7 +250,9 @@ Route::get('/get-brand-by-itemproduct/{productId}', [warehouseStockController::c
 
 
 Route::get('/give-order-to-vendor', [VendorController::class, 'give_order_to_vendor'])->name('give-order-to-vendor');
-Route::post('/assign-order-to-vendor', [VendorController::class, 'assign_order_to_vendor'])->name('assign-order-to-vendor');
+Route::post('/fetch-order-details', [OrderController::class, 'fetchOrderDetails'])->name('fetch-order-details');
+Route::post('/assign-order-to-vendor', [OrderController::class, 'assignOrderItemsToVendor'])->name('assign-order-to-vendor');
+Route::get('/vendor-orders-asigned', [OrderController::class, 'vendor_orders_asigned'])->name('vendor-orders-asigned');
 
 Route::get('/sale-report', [ReportController::class, 'sale_report'])->name('sale-report');
 Route::get('/filter-sales', [ReportController::class, 'filterSales'])->name('filter.sales');

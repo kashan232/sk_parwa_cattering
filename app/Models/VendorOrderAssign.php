@@ -10,11 +10,16 @@ class VendorOrderAssign extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
+
     protected $guarded = [];
 
     public function vendor()
     {
         return $this->belongsTo(Vendor::class, 'vendor_id', 'id');
+    }
+
+    public function item()
+    {
+        return $this->belongsTo(Product::class, 'item_id');
     }
 }

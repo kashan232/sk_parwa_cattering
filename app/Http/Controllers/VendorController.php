@@ -86,28 +86,5 @@ class VendorController extends Controller
     }
     
 
-    public function assign_order_to_vendor(Request $request)
-    {
-        $request->validate([
-            'vendor_id' => 'required|exists:vendors,id',
-            'order_id' => 'required|exists:orders,id',
-            'assign_date' => 'required|date',
-        ]);
-
-        // Assign Vendor to Order
-        $order = \App\Models\Order::find($request->order_id);
-        $order->assign_status = 'Assigned';
-        $order->save();
-
-        // Insert into Vendor Order Assign Table
-        VendorOrderAssign::create([
-            'vendor_id' => $request->vendor_id,
-            'order_id' => $request->order_id,
-            'assign_date' => $request->assign_date,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return redirect()->route('give-order-to-vendor')->with('success', 'Order assigned successfully!');
-    }
+   
 }

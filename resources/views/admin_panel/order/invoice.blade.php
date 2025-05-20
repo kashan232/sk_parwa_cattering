@@ -87,7 +87,9 @@
     }
 
     @media print {
-        .invoice-footer, .navbar-wrapper {
+
+        .invoice-footer,
+        .navbar-wrapper {
             display: none;
         }
 
@@ -117,7 +119,7 @@
                                 <div class="invoice">
                                     <!-- Header with Logo and Contact Details -->
                                     <div class="invoice-header">
-                                        <img src="{{ asset('assets/images/logo.jpg') }}" alt="Company Logo">
+                                        <img src="{{ asset('assets/images/final_logo.png') }}" alt="Company Logo">
                                         <p><strong>Contact for Query:</strong> 0333-2548976 | 0333-2548976</p>
                                         <p><strong>Invoice Date: {{ $order->sale_date }}</strong> | <strong>Program Date: {{ $order->delivery_date }}</strong></p>
                                     </div>
@@ -142,7 +144,7 @@
                                             <tr>
                                                 <th>S.No</th>
                                                 <th>Item Name</th>
-                                                <th>Main Category</th>
+                                                <th>Sub Category</th>
                                                 <th>Rate</th>
                                                 <th>QTY</th>
                                                 <th>Amount</th>
@@ -162,7 +164,7 @@
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $name }}</td>
-                                                <td>{{ $categories[$index] ?? '-' }}</td>
+                                                <td>{{ $categoriesMap[$categories[$index]] ?? '-' }}</td>
                                                 <td>{{ number_format($prices[$index], 2) }}</td>
                                                 <td>{{ $quantities[$index] }} {{ $units[$index] ?? '-' }}</td>
                                                 <td>{{ number_format($totals[$index], 2) }}</td>

@@ -27,6 +27,8 @@ class KitchenInventoryController extends Controller
 
         KitchenItem::create([
             'name' => $request->name,
+            'unit' => $request->unit,
+            'unit_price' => $request->unit_price,
         ]);
 
         return back()->with('success', 'Item added successfully!');

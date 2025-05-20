@@ -13,6 +13,7 @@ use App\Models\KitchenInventory;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayments;
+use App\Models\VendorOrderAssign;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Riskihajar\Terbilang\Facades\Terbilang;
@@ -23,7 +24,7 @@ class OrderController extends Controller
     {
         if (Auth::id()) {
             $userId = Auth::id();
-            $orders = Order::with('vendorOrderAssign.vendor')->get();
+            $orders = Order::with('vendorOrderAssigns.vendor')->get();
             return view('admin_panel.order.all_order', compact('orders'));
         } else {
             return redirect()->back();
@@ -106,8 +107,10 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with('Customer')->findOrFail($id);
+        $categories = $order->subcategories(); // Yeh humein collection dega
+        $categoriesMap = $categories->pluck('name', 'category_id')->toArray();
 
-        return view('admin_panel.order.invoice', compact('order'));
+        return view('admin_panel.order.invoice', compact('order', 'categoriesMap'));
     }
 
     public function show_voucher($id)
@@ -123,6 +126,40 @@ class OrderController extends Controller
         return view('admin_panel.order.show_voucher', compact('order', 'amountInWords', 'orderPayments'));
     }
 
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'status' => 'required|in:Confirmed,Preparing,Delivered,Cancelled'
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+        $order->order_status = $request->status;
+        $order->save();
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function fetchVendorAssignments(Request $request)
+    {
+        $orderId = $request->order_id;
+        \Log::info('Order ID Received: ' . $orderId);
+
+        $assignments = VendorOrderAssign::where('order_id', $orderId)
+            ->with(['vendor', 'item'])
+            ->get()
+            ->map(function ($assignment) {
+                return [
+                    'vendor_name' => $assignment->vendor->name,
+                    'item_name'   => $assignment->item ? $assignment->item->name : 'N/A',
+                    'quantity'    => $assignment->quantity,
+                ];
+            });
+
+        return response()->json(['assignments' => $assignments]);
+    }
+
 
     public function paymentUpdate(Request $request)
     {
@@ -136,7 +173,16 @@ class OrderController extends Controller
         $purpose = $request->input('purpose', 'Payment Received');
 
         $newAdvancePaid = $order->advance_paid + $paidAmount;
-        $newRemainingAmount = $order->remaining_amount - $paidAmount;
+
+        // ✅ Check: paid amount should not exceed payable amount
+        if ($newAdvancePaid > $order->payable_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paid amount exceeds the total payable amount!'
+            ]);
+        }
+
+        $newRemainingAmount = $order->payable_amount - $newAdvancePaid;
 
         // Payment status update
         $paymentStatus = ($newRemainingAmount <= 0) ? "Paid" : "Unpaid";
@@ -158,8 +204,12 @@ class OrderController extends Controller
             'updated_at' => now(),
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Payment updated and recorded successfully!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment updated and recorded successfully!'
+        ]);
     }
+
 
     public function save_order(Request $request)
     {
@@ -365,6 +415,86 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+    public function fetchOrderDetails(Request $request)
+    {
+        $orderId = $request->order_id;
+        $order = Order::find($orderId);
+
+        if ($order) {
+            $items = [];
+
+            $itemCategories = json_decode($order->item_category);
+            $itemNames = json_decode($order->item_name);
+            $itemQuantities = json_decode($order->quantity);
+            $itemunits = json_decode($order->unit);
+
+            foreach ($itemNames as $index => $name) {
+                $items[] = [
+                    'id' => $index + 1,
+                    'name' => $name,
+                    'quantity' => $itemQuantities[$index],
+                    'unit' => $itemunits[$index]
+                ];
+            }
+
+            return response()->json(['items' => $items]);
+        }
+
+        return response()->json(['message' => 'Order not found'], 404);
+    }
+
+    public function assignOrderItemsToVendor(Request $request)
+    {
+        $orderId = $request->order_id;
+        $assignments = $request->assignments;
+
+        $order = Order::find($orderId);
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $assignedVendors = [];
+
+        foreach ($assignments as $itemId => $data) {
+            $vendorId = $data['vendor_id'];
+            $quantity = $data['quantity'];
+
+            if ($vendorId && $quantity > 0) {
+                VendorOrderAssign::create([
+                    'vendor_id' => $vendorId,
+                    'order_id' => $orderId,
+                    'item_id' => $itemId,
+                    'quantity' => $quantity,
+                    'assign_date' => now(),
+                ]);
+
+                // Add vendor to the list for order update
+                if (!in_array($vendorId, $assignedVendors)) {
+                    $assignedVendors[] = $vendorId;
+                }
+            }
+        }
+
+        // Update order assign_status
+        $order->assign_status = implode(',', $assignedVendors);
+        $order->save();
+
+        return response()->json(['message' => 'Items successfully assigned to vendors']);
+    }
+
+
+
+    public function vendor_orders_asigned()
+    {
+        if (Auth::id()) {
+            $userId = Auth::id();
+            $orders = Order::with('vendorOrderAssigns.vendor')->get();
+            return view('admin_panel.vendor.vendor_orders_asigned', compact('orders'));
+        } else {
+            return redirect()->back();
         }
     }
 }

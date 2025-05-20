@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\MenuEstimate;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,8 @@ class MenuEstimateController extends Controller
                 'food_type' => $request->input('food_type', ''),
                 'Venue' => $request->input('Venue', ''),
                 'person_program' => $request->input('person_program', ''),
+                'mobile_number' => $request->input('mobile_number', ''),
+                'reference_name' => $request->input('reference_name', ''),
                 'item_category' => json_encode($request->input('item_category', [])),
                 'item_subcategory' => json_encode($request->input('item_subcategory', [])),
                 'item_name' => json_encode($request->input('item_name', [])),
@@ -84,10 +87,13 @@ class MenuEstimateController extends Controller
     public function show($id)
     {
         $order = MenuEstimate::findOrFail($id);
+        $categories = $order->subcategories(); // Yeh humein collection dega
+        $categoriesMap = $categories->pluck('name', 'category_id')->toArray();
 
-        return view('admin_panel.menu_estimate.invoice', compact('order'));
+        return view('admin_panel.menu_estimate.invoice', compact('order', 'categoriesMap'));
     }
 
+    
     public function confirmOrder(Request $request)
     {
         $estimateId = $request->estimate_id;
@@ -147,6 +153,74 @@ class MenuEstimateController extends Controller
                 'status' => 'error',
                 'message' => 'Something went wrong: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function edit($id)
+    {
+        $order = MenuEstimate::findOrFail($id);
+
+        // Decode the stored category and subcategory IDs
+        $categoryIds = json_decode($order->item_category, true);
+        $subcategoryIds = json_decode($order->item_subcategory, true);
+
+        // Fetch their names
+        $categoryNames = Category::whereIn('id', $categoryIds)->pluck('category')->toArray();
+        $subcategoryNames = Subcategory::whereIn('id', $subcategoryIds)->pluck('name')->toArray();
+
+        $productIds = json_decode($order->item_name);
+
+        // Other data
+        $all_product = Product::get();
+        $Customers = Customer::get();
+        $Category = Category::get();
+
+        return view('admin_panel.menu_estimate.edit_estimate', compact(
+            'all_product',
+            'Customers',
+            'Category',
+            'order',
+            'categoryNames',
+            'subcategoryNames'
+        ));
+    }
+
+    public function update_menu(Request $request, $id)
+    {
+        if (Auth::id()) {
+            $userId = Auth::id();
+
+            // Total price aur payable amount calculate karna
+            $totalPrice = $request->input('total_price', 0);
+            $discount = $request->input('discount', 0);
+            $payableAmount = $totalPrice - $discount;
+
+            // Record ko find karna
+            $order = MenuEstimate::findOrFail($id);
+
+            // Update data
+            $order->update([
+                'user_id' => $userId,
+                'customer_name' => $request->input('customer_name'),
+                'sale_date' => $request->input('sale_date', ''),
+                'delivery_date' => $request->input('delivery_date', ''),
+                'event_type' => $request->input('event_type', ''),
+                'food_type' => $request->input('food_type', ''),
+                'Venue' => $request->input('Venue', ''),
+                'person_program' => $request->input('person_program', ''),
+                'item_category' => json_encode($request->input('item_category', [])),
+                'item_subcategory' => json_encode($request->input('item_subcategory', [])),
+                'item_name' => json_encode($request->input('item_name', [])),
+                'unit' => json_encode($request->input('unit', [])),
+                'quantity' => json_encode($request->input('quantity', [])),
+                'price' => json_encode($request->input('price', [])),
+                'total' => json_encode($request->input('total', [])),
+                'total_price' => $totalPrice,
+            ]);
+
+            return redirect()->back()->with('success', 'Order successfully updated!');
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized access!');
         }
     }
 }

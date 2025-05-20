@@ -10,7 +10,7 @@
     </div>
     <div class="navbar__right">
         <ul class="navbar__action-list">
-        @if(Auth::check() && in_array(Auth::user()->usertype, ['admin', 'super admin']))
+            @if(Auth::check() && in_array(Auth::user()->usertype, ['admin', 'super admin']))
 
             <li class="nav-item">
                 @php
@@ -62,6 +62,12 @@
                     </span>
                 </button>
                 <div class="dropdown-menu dropdown-menu--sm p-0 border-0 box--shadow1 dropdown-menu-right">
+                    @if(Auth::check() && Auth::user()->usertype == 'admin')
+                    <a href="{{ route('Admin-Change-Password') }}" class="dropdown-menu__item d-flex align-items-center px-3 py-2">
+                        <i class="dropdown-menu__icon las la-key"></i>
+                        <span class="dropdown-menu__caption">Password</span>
+                    </a>
+                    @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();"

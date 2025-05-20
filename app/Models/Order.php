@@ -21,8 +21,15 @@ class Order extends Model
         return $this->hasMany(OrderItem::class, 'order_id');
     }
 
-    public function vendorOrderAssign()
+    public function vendorOrderAssigns()
     {
-        return $this->hasOne(VendorOrderAssign::class, 'order_id', 'id');
+        return $this->hasMany(VendorOrderAssign::class, 'order_id');
+    }
+
+    public function subcategories()
+    {
+        $categoryIds = json_decode($this->item_subcategory, true);
+
+        return Subcategory::whereIn('id', $categoryIds)->get();
     }
 }

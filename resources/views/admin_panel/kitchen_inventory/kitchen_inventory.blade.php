@@ -30,18 +30,22 @@
                                         <thead>
                                             <tr>
                                                 <th>Item Name</th>
+                                                <th>Unit</th>
                                                 <th>Quantity</th>
+                                                <th>Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse($inventoryItems as $inventory)
                                             <tr>
-                                                <td>{{ $inventory->item->name ?? 'N/A' }}</td> {{-- Fetch item name properly --}}
+                                                <td>{{ $inventory->item->name ?? 'N/A' }}</td>
+                                                <td>{{ $inventory->item->unit ?? '-' }}</td>
                                                 <td>{{ $inventory->quantity }}</td>
+                                                <td>Rs. {{ number_format($inventory->quantity * $inventory->item->unit_price, 2) }}</td>
                                             </tr>
                                             @empty
                                             <tr>
-                                                <td colspan="2" class="text-center">No Inventory Data Available</td>
+                                                <td colspan="4" class="text-center">No Inventory Data Available</td>
                                             </tr>
                                             @endforelse
                                         </tbody>
@@ -71,6 +75,17 @@
                             <label class="form-label">Item Name</label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Unit (e.g. 12 kg)</label>
+                            <input type="text" class="form-control" name="unit" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Unit Price</label>
+                            <input type="number" class="form-control" name="unit_price" required>
+                        </div>
+
                         <button type="submit" class="btn btn-primary">Add Item</button>
                     </form>
                 </div>
