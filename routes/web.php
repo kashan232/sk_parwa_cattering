@@ -253,6 +253,7 @@ Route::get('/give-order-to-vendor', [VendorController::class, 'give_order_to_ven
 Route::post('/fetch-order-details', [OrderController::class, 'fetchOrderDetails'])->name('fetch-order-details');
 Route::post('/assign-order-to-vendor', [OrderController::class, 'assignOrderItemsToVendor'])->name('assign-order-to-vendor');
 Route::get('/vendor-orders-asigned', [OrderController::class, 'vendor_orders_asigned'])->name('vendor-orders-asigned');
+Route::post('/vendor-ledger-store', [OrderController::class, 'storevendorledger'])->name('vendor.ledger.store');
 
 Route::get('/sale-report', [ReportController::class, 'sale_report'])->name('sale-report');
 Route::get('/filter-sales', [ReportController::class, 'filterSales'])->name('filter.sales');

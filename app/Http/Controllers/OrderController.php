@@ -13,6 +13,7 @@ use App\Models\KitchenInventory;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayments;
+use App\Models\VendorLedger;
 use App\Models\VendorOrderAssign;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -490,11 +491,41 @@ class OrderController extends Controller
     public function vendor_orders_asigned()
     {
         if (Auth::id()) {
-            $userId = Auth::id();
             $orders = Order::with('vendorOrderAssigns.vendor')->get();
-            return view('admin_panel.vendor.vendor_orders_asigned', compact('orders'));
+            $ledgers = VendorLedger::all();
+
+            foreach ($orders as $order) {
+                $order->items = json_decode($order->item_name, true);
+            }
+
+            return view('admin_panel.vendor.vendor_orders_asigned', compact('orders', 'ledgers'));
         } else {
             return redirect()->back();
         }
+    }
+
+    public function storevendorledger(Request $request)
+    {
+        $orderId = $request->order_id;
+        $vendorId = $request->vendor_id;
+        $amounts = $request->amounts;
+        $dates = $request->dates;
+
+        foreach ($amounts as $assignId => $amount) {
+            $assign = VendorOrderAssign::find($assignId); // find the assignment
+
+            if ($assign) {
+                VendorLedger::create([
+                    'order_id'      => $orderId,
+                    'vendor_id'     => $vendorId,
+                    'item_id'       => $assign->item_id,
+                    'quantity'      => $assign->quantity,
+                    'amount'        => $amount,
+                    'received_date' => $dates[$assignId],
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Vendor ledger updated successfully.');
     }
 }

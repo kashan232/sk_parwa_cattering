@@ -422,7 +422,7 @@
                             </li>
 
                             <li class="sidebar-menu-item  ">
-                                <a href="{{ route('give-order-to-vendor') }}"
+                                <a href="{{ route('vendor-orders-asigned') }}"
                                     class="nav-link">
                                     <i class="menu-icon la la-dot-circle"></i>
                                     <span class="menu-title">Vendor Orders asigned</span>

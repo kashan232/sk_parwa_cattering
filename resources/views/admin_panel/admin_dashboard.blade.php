@@ -1,278 +1,588 @@
 @include('admin_panel.include.header_include')
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e73df, #224abe);
+        padding: 10px 0px;
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #1cc88a, #138d66);
+        padding: 10px 0px;
+
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f6c23e, #e0a800);
+        padding: 10px 0px;
+
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #36b9cc, #1e9db7);
+        padding: 10px 0px;
+    }
+
+
+    .hover-card {
+        transition: 0.3s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h6 {
+        font-size: 14px;
+        color: #333;
+    }
+</style>
 
 <body>
-    <!-- page-wrapper start -->
     <div class="page-wrapper default-version">
         @include('admin_panel.include.sidebar_include')
-        <!-- sidebar end -->
-
-        <!-- navbar-wrapper start -->
         @include('admin_panel.include.navbar_include')
-        <!-- navbar-wrapper end -->
-
         <div class="body-wrapper">
             <div class="bodywrapper__inner">
-
                 <div class="d-flex mb-30 flex-wrap gap-3 justify-content-between align-items-center">
                     <h6 class="page-title">Dashboard</h6>
                     <div class="d-flex flex-wrap justify-content-end gap-2 align-items-center breadcrumb-plugins">
                     </div>
                 </div>
-
-                <div class="row gy-4 mb-30">
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two box--shadow2 b-radius--5 bg--white">
-                            <i class="las la-shopping-bag overlay-icon text--success"></i>
-                            <div class="widget-two__icon b-radius--5   bg--info  ">
-                                <i class="las la-shopping-bag"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3>2</h3>
-                                <p>Categories</p>
+                <!-- Order Payments Heading -->
+                <div class="mb-3">
+                    <h4 class="fw-bold">📦 Order Payments</h4>
+                    <hr>
+                </div>
+                <div class="row">
+                    <!-- Total Order Amount -->
+                    <div class="col-md-3">
+                        <div class="card text-white bg-gradient-primary shadow rounded-3 border-0 hover-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1 text-white">Total Order Amount</h6>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. 500,000</h3>
+                                    </div>
+                                    <div class="icon bg-white text-primary rounded-circle p-3">
+                                        <i class="fas fa-file-invoice-dollar fs-4"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two box--shadow2 b-radius--5 bg--white">
-                            <i class="las la-shopping-bag overlay-icon text--success"></i>
-
-                            <div class="widget-two__icon b-radius--5   bg--success  ">
-                                <i class="las la-shopping-bag"></i>
-                            </div>
-
-                            <div class="widget-two__content">
-                                <h3>2</h3>
-                                <p>Sub-Categories</p>
+                    <!-- Paid Amount -->
+                    <div class="col-md-3">
+                        <div class="card text-white bg-gradient-success shadow rounded-3 border-0 hover-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1 text-white">Paid Amount</h6>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. 350,000</h3>
+                                    </div>
+                                    <div class="icon bg-white text-success rounded-circle p-3">
+                                        <i class="fas fa-hand-holding-usd fs-4"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
                     </div>
 
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two box--shadow2 b-radius--5 bg--white">
-                            <i class="las la-share overlay-icon text--danger"></i>
-
-                            <div class="widget-two__icon b-radius--5   bg--danger  ">
-                                <i class="las la-share"></i>
+                    <!-- Remaining Amount -->
+                    <div class="col-md-3">
+                        <div class="card text-white bg-gradient-warning shadow rounded-3 border-0 hover-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1 text-white">Remaining Amount</h6>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. 150,000</h3>
+                                    </div>
+                                    <div class="icon bg-white text-warning rounded-circle p-3">
+                                        <i class="fas fa-wallet fs-4"></i>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="widget-two__content">
-                                <h3>3</h3>
-                                <p>Products</p>
-                            </div>
-
                         </div>
-
                     </div>
-
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two box--shadow2 b-radius--5 bg--white">
-                            <i class="las la-shopping-cart overlay-icon text--primary"></i>
-
-                            <div class="widget-two__icon b-radius--5   bg--primary  ">
-                                <i class="las la-shopping-cart"></i>
+                    <!-- Estimated Amount -->
+                    <div class="col-md-3">
+                        <div class="card text-white bg-gradient-info shadow rounded-3 border-0 hover-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1 text-white">Pending Estimated</h6>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. 600,000</h3>
+                                    </div>
+                                    <div class="icon bg-white text-info rounded-circle p-3">
+                                        <i class="fas fa-chart-line fs-4"></i>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="widget-two__content">
-                                <h3>3</h3>
-                                <p>Orders</p>
-                            </div>
-
                         </div>
-
-                    </div>
-                </div>
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Order Payment Summary</h5>
-                        <canvas id="ordersChart" height="100"></canvas>
                     </div>
                 </div>
 
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Orders by Month</h5>
-                        <canvas id="monthOrdersChart" height="100"></canvas>
+                <div class="mt-5 mb-3">
+                    <h4 class="fw-bold">🚚 Order Status</h4>
+                    <hr>
+                </div>
+
+                <div class="row">
+                    <!-- Delivered Orders -->
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h6 class="fw-bold">Delivered</h6>
+                                <p class="fs-5 fw-semibold">120</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Orders -->
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                <h6 class="fw-bold">Pending</h6>
+                                <p class="fs-5 fw-semibold">80</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmed Orders -->
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-check-double fa-2x text-primary mb-2"></i>
+                                <h6 class="fw-bold">Confirmed</h6>
+                                <p class="fs-5 fw-semibold">60</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preparing Orders -->
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-utensils fa-2x text-info mb-2"></i>
+                                <h6 class="fw-bold">Preparing</h6>
+                                <p class="fs-5 fw-semibold">45</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancelled Orders -->
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                                <h6 class="fw-bold">Cancelled</h6>
+                                <p class="fs-5 fw-semibold">20</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="card bg-light shadow-sm border-0 text-center hover-card">
+                            <div class="card-body">
+                                <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                                <h6 class="fw-bold">Total Estimates</h6>
+                                <p class="fs-5 fw-semibold">85</p> {{-- Replace 85 with your dynamic count if needed --}}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Payment Amount by Month</h5>
-                        <canvas id="paymentAmountChart" height="100"></canvas>
+                <div class="mt-5 mb-3">
+                    <h4 class="fw-bold">🚚 Orders</h4>
+                    <hr>
+                </div>
+
+                <div class="mb-3">
+                    <label for="orderFilter" class="form-label fw-bold">Filter By:</label>
+                    <select id="orderFilter" class="form-select w-auto">
+                        <option value="daily" selected>Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+
+                <div id="orderStatusChart" style="height: 400px;" class="bg-white"></div>
+
+                <div class="mt-5 mb-3">
+                    <h4 class="fw-bold">🚚 Orders Payment</h4>
+                    <hr>
+                </div>
+                <div class="mb-3">
+                    <label for="paymentFilter" class="form-label fw-bold">Filter By:</label>
+                    <select id="paymentFilter" class="form-select" style="max-width: 200px;">
+                        <option value="daily" selected>Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+
+                <!-- Chart Container -->
+                <div id="paymentStatusChart" class="bg-white"></div>
+
+                <div class="mt-5 mb-3">
+                    <h4 class="fw-bold">🚚 Purchase Status</h4>
+                    <hr>
+                </div>
+                <div class="container mt-4">
+                    <!-- Heading for Purchase Items -->
+                    <!-- First row: Total Categories, Total Brands, Total Products -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Categories</h5>
+                                    <p class="card-text display-6" id="totalCategories">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Brands</h5>
+                                    <p class="card-text display-6" id="totalBrands">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Products</h5>
+                                    <p class="card-text display-6" id="totalProducts">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second row: Purchase Amounts -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Purchase Amount</h5>
+                                    <p class="card-text display-6" id="totalPurchaseAmount">PKR 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Purchase Return Amount</h5>
+                                    <p class="card-text display-6" id="totalPurchaseReturnAmount">PKR 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-secondary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Claim Return Amount</h5>
+                                    <p class="card-text display-6" id="totalClaimReturnAmount">PKR 0</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-            </div><!-- bodywrapper__inner end -->
-        </div><!-- body-wrapper end -->
+
+            </div>
+        </div>
     </div>
-
     @include('admin_panel.include.footer_include')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-    // Orders Payment Summary Chart
-    const ctx = document.getElementById('ordersChart').getContext('2d');
+        // Static dummy data filled in for demonstration
+        const orderStats = {
+            daily: {
+                categories: ['2025-03-07', '2025-03-08', '2025-03-09', '2025-03-10'],
+                series: [{
+                        name: 'Delivered',
+                        data: [2, 4, 1, 3]
+                    },
+                    {
+                        name: 'Pending',
+                        data: [1, 3, 2, 4]
+                    },
+                    {
+                        name: 'Preparing',
+                        data: [0, 2, 3, 1]
+                    },
+                    {
+                        name: 'Canceled',
+                        data: [1, 0, 2, 1]
+                    }
+                ]
+            },
+            weekly: {
+                categories: ['Week 1 of March', 'Week 2 of March', 'Week 3 of March'],
+                series: [{
+                        name: 'Delivered',
+                        data: [7, 10, 5]
+                    },
+                    {
+                        name: 'Pending',
+                        data: [3, 5, 2]
+                    },
+                    {
+                        name: 'Preparing',
+                        data: [4, 6, 3]
+                    },
+                    {
+                        name: 'Canceled',
+                        data: [2, 1, 3]
+                    }
+                ]
+            },
+            monthly: {
+                categories: ['January 2025', 'February 2025', 'March 2025'],
+                series: [{
+                        name: 'Delivered',
+                        data: [25, 30, 40]
+                    },
+                    {
+                        name: 'Pending',
+                        data: [10, 15, 20]
+                    },
+                    {
+                        name: 'Preparing',
+                        data: [8, 12, 18]
+                    },
+                    {
+                        name: 'Canceled',
+                        data: [5, 7, 6]
+                    }
+                ]
+            }
+        };
 
-    const ordersChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Hafiz Zain Shaikh', 'Kashan', 'Waleed Raza'], // order_name or customer_name
-            datasets: [
-                {
-                    label: 'Payable Amount',
-                    data: [13750, 13500, 13750],
-                    backgroundColor: 'rgba(75, 160, 100, 0.7)',
-                    borderRadius: 8,
+        // Chart config
+        const options = {
+            chart: {
+                type: 'bar',
+                height: 400,
+                toolbar: {
+                    show: false
                 },
-                {
-                    label: 'Advance Paid',
-                    data: [3750, 1000, 13750],
-                    type: 'line',
-                    borderColor: '#ff6b6b',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    pointBackgroundColor: '#ff6b6b',
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#333',
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        afterLabel: function(context) {
-                            const remaining = [10000, 12500, 0];
-                            return 'Remaining: ' + remaining[context.dataIndex];
-                        }
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Customer Orders Overview',
-                    color: '#444',
-                    font: {
-                        size: 18
-                    }
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
                 }
             },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#444',
-                        font: {
-                            size: 13
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#444',
-                        beginAtZero: true
-                    }
-                }
-            }
-        }
-    });
-
-    // Orders by Month Chart
-    const monthOrdersCtx = document.getElementById('monthOrdersChart').getContext('2d');
-    const monthOrdersChart = new Chart(monthOrdersCtx, {
-        type: 'bar',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'], // example months
-            datasets: [{
-                label: 'Number of Orders',
-                data: [25, 30, 45, 20, 50, 65, 80, 75], // Example number of orders per month
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Orders by Month',
-                    color: '#444',
-                    font: {
-                        size: 18
-                    }
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '45%',
+                    endingShape: 'rounded'
                 }
             },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#444',
-                        font: {
-                            size: 13
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#444',
-                        beginAtZero: true
-                    }
-                }
-            }
-        }
-    });
-
-    // Payment Amount by Month Chart
-    const paymentAmountCtx = document.getElementById('paymentAmountChart').getContext('2d');
-    const paymentAmountChart = new Chart(paymentAmountCtx, {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'], // example months
-            datasets: [{
-                label: 'Total Payment Amount',
-                data: [100000, 150000, 200000, 120000, 250000, 300000, 350000, 400000], // Example total payment per month
-                borderColor: 'rgba(75, 160, 100, 1)',
-                backgroundColor: 'rgba(75, 160, 100, 0.2)',
-                borderWidth: 2,
-                tension: 0.4,
-                pointBackgroundColor: 'rgba(75, 160, 100, 1)',
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Payment Amount by Month',
-                    color: '#444',
-                    font: {
-                        size: 18
-                    }
-                }
+            colors: ['#4CAF50', '#FFC107', '#17A2B8', '#DC3545'],
+            dataLabels: {
+                enabled: false
             },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#444',
-                        font: {
-                            size: 13
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#444',
-                        beginAtZero: true
-                    }
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            series: orderStats.daily.series,
+            xaxis: {
+                categories: orderStats.daily.categories,
+            },
+            fill: {
+                opacity: 1
+            },
+            legend: {
+                position: 'top'
+            },
+        };
+
+        const chart = new ApexCharts(document.querySelector("#orderStatusChart"), options);
+        chart.render();
+
+        // Filter change handler
+        document.getElementById('orderFilter').addEventListener('change', function() {
+            const selected = this.value;
+            chart.updateOptions({
+                series: orderStats[selected].series,
+                xaxis: {
+                    categories: orderStats[selected].categories
                 }
-            }
-        }
-    });
+            });
+        });
     </script>
+
+
+    <script>
+        const paymentStats = {
+            daily: {
+                categories: ['ORD001', 'ORD002', 'ORD003'],
+                series: [{
+                        name: 'Advance Paid',
+                        data: [500, 700, 400]
+                    },
+                    {
+                        name: 'Remaining',
+                        data: [1000, 300, 600]
+                    },
+                    {
+                        name: 'Discount',
+                        data: [100, 50, 80]
+                    },
+                    {
+                        name: 'Payable Amount',
+                        data: [1400, 1100, 1000]
+                    },
+                    {
+                        name: 'Total Amount',
+                        data: [1500, 1150, 1080]
+                    }
+                ]
+            },
+            weekly: {
+                categories: ['Week 1', 'Week 2', 'Week 3'],
+                series: [{
+                        name: 'Advance Paid',
+                        data: [1200, 800, 900]
+                    },
+                    {
+                        name: 'Remaining',
+                        data: [400, 700, 600]
+                    },
+                    {
+                        name: 'Discount',
+                        data: [100, 120, 90]
+                    },
+                    {
+                        name: 'Payable Amount',
+                        data: [1600, 1500, 1400]
+                    },
+                    {
+                        name: 'Total Amount',
+                        data: [1700, 1620, 1490]
+                    }
+                ]
+            },
+            monthly: {
+                categories: ['March 2025', 'April 2025'],
+                series: [{
+                        name: 'Advance Paid',
+                        data: [2000, 1800]
+                    },
+                    {
+                        name: 'Remaining',
+                        data: [1000, 1200]
+                    },
+                    {
+                        name: 'Discount',
+                        data: [150, 200]
+                    },
+                    {
+                        name: 'Payable Amount',
+                        data: [2800, 2800]
+                    },
+                    {
+                        name: 'Total Amount',
+                        data: [2950, 3000]
+                    }
+                ]
+            }
+        };
+
+        const paymentChartOptions = {
+            chart: {
+                type: 'bar',
+                height: 500,
+                toolbar: {
+                    show: true
+                },
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    borderRadius: 10,
+                    dataLabels: {
+                        position: 'top'
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            colors: ['#4CAF50', '#DC3545', '#FFC107', '#17A2B8', '#6c757d'],
+            xaxis: {
+                categories: paymentStats.daily.categories,
+                labels: {
+                    style: {
+                        fontSize: '14px'
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Amount (PKR)',
+                    style: {
+                        fontWeight: 600,
+                        fontSize: '14px'
+                    }
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                theme: 'dark',
+                y: {
+                    formatter: function(val) {
+                        return "PKR " + val.toLocaleString();
+                    }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                markers: {
+                    radius: 10
+                }
+            },
+            series: paymentStats.daily.series
+        };
+
+        const paymentChart = new ApexCharts(document.querySelector("#paymentStatusChart"), paymentChartOptions);
+        paymentChart.render();
+
+        // Filter change
+        document.getElementById('paymentFilter').addEventListener('change', function() {
+            const selected = this.value;
+            paymentChart.updateOptions({
+                series: paymentStats[selected].series,
+                xaxis: {
+                    categories: paymentStats[selected].categories
+                }
+            });
+        });
+    </script>
+
+
+
+
 </body>
