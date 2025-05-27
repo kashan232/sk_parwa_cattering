@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -78,35 +79,176 @@ class HomeController extends Controller
                 return view('Super_admin.superadmin_dashboard', compact('totalPurchasesPrice', 'subcategories', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
             } else if ($usertype == 'admin') {
                 $userId = Auth::id();
-                $totalPurchasesPrice = \App\Models\Purchase::sum('total_price');
-                $totalPurchaseReturnsPrice = \App\Models\PurchaseReturn::sum('total_price');
-                // Fetch all products for the logged-in admin
-                // $all_product = Product::where('admin_or_user_id', '=', $userId)->get();
-                $all_product = Product::get();
 
-                // Calculate total stock value for all products
-                $totalStockValue = $all_product->sum(function ($product) {
-                    return $product->stock * $product->wholesale_price;
-                });
+                // Orders table calculations
+                $totalOrderAmount = DB::table('orders')->sum('payable_amount');
+                $paidAmount = DB::table('orders')->sum('advance_paid');
+                $remainingAmount = DB::table('orders')->sum('remaining_amount');
 
+                // Menu Estimates table calculation
+                $pendingEstimated = DB::table('menu_estimates')->sum('total_price');
 
-                // Calculate total stock value for each product
-                foreach ($all_product as $product) {
-                    $product->total_stock_value = $product->stock * $product->wholesale_price;
+                $Categories = DB::table('item_categories')->count();
+                $Brands = DB::table('brands')->count();
+                $Products = DB::table('item_products')->count();
+
+                $TotalPurchaseAmount = DB::table('purchases')->sum('Payable_amount');
+                $TotalPurchaseReturn  = DB::table('purchase_returns')->sum('payable_amount');
+                $TotalClaimReturn = DB::table('claim_returns')->sum('payable_amount');
+
+                
+                $deliveredOrders = DB::table('orders')->where('order_status', 'Delivered')->count();
+                $pendingOrders = DB::table('orders')->where('order_status', 'Pending')->count();
+                $confirmedOrders = DB::table('orders')->where('order_status', 'confirmed')->count();
+                $preparingOrders = DB::table('orders')->where('order_status', 'Preparing')->count();
+                $cancelledOrders = DB::table('orders')->where('order_status', 'Cancelled')->count();
+
+                $totalEstimates = DB::table('menu_estimates')->count();
+
+                $statuses = ['Delivered', 'Pending', 'confirmed', 'Preparing', 'Cancelled'];
+
+                // ===== ORDER STATUS CHARTS =====
+                // DAILY
+                $dailyLabels = collect(range(6, 0))->map(fn($i) => Carbon::today()->subDays($i)->format('Y-m-d'));
+                $dailySeries = [];
+                foreach ($statuses as $status) {
+                    $data = $dailyLabels->map(function ($date) use ($status) {
+                        return DB::table('orders')
+                            ->whereDate('created_at', $date)
+                            ->where('order_status', $status)
+                            ->count();
+                    });
+                    $dailySeries[] = ['name' => $status, 'data' => $data];
                 }
 
+                // WEEKLY
+                $weeklyLabels = ['This Week', 'Last Week', '2 Weeks Ago'];
+                $weeklySeries = [];
+                foreach ($statuses as $status) {
+                    $data = collect([0, 1, 2])->map(function ($i) use ($status) {
+                        $start = Carbon::now()->startOfWeek()->subWeeks($i);
+                        $end = $start->copy()->endOfWeek();
+                        return DB::table('orders')
+                            ->whereBetween('created_at', [$start, $end])
+                            ->where('order_status', $status)
+                            ->count();
+                    });
+                    $weeklySeries[] = ['name' => $status, 'data' => $data->reverse()->values()];
+                }
 
-                $categories = DB::table('categories')->count();
-                $subcategories = DB::table('subcategories')->count();
-                $products = DB::table('products')->count();
-                $suppliers = DB::table('suppliers')->count();
-                $customers = DB::table('customers')->count();
-                $totalsales = DB::table('sales')->sum('Payable_amount');
+                // MONTHLY
+                $months = range(1, Carbon::now()->month);
+                $monthLabels = collect($months)->map(fn($m) => Carbon::create()->month($m)->format('F'));
+                $monthlySeries = [];
+                foreach ($statuses as $status) {
+                    $data = collect($months)->map(function ($month) use ($status) {
+                        return DB::table('orders')
+                            ->whereMonth('created_at', $month)
+                            ->whereYear('created_at', Carbon::now()->year)
+                            ->where('order_status', $status)
+                            ->count();
+                    });
+                    $monthlySeries[] = ['name' => $status, 'data' => $data];
+                }
 
-                // $lowStockProducts = Product::whereRaw('CAST(stock AS UNSIGNED) <= CAST(alert_quantity AS UNSIGNED)')->get();
-                // dd($lowStockProducts);
-                return view('admin_panel.admin_dashboard', compact('totalPurchasesPrice', 'subcategories', 'totalPurchaseReturnsPrice', 'all_product', 'totalStockValue', 'categories', 'products', 'suppliers', 'customers', 'totalsales'));
+                $orderChartStats = [
+                    'daily' => [
+                        'categories' => $dailyLabels,
+                        'series' => $dailySeries
+                    ],
+                    'weekly' => [
+                        'categories' => $weeklyLabels,
+                        'series' => $weeklySeries
+                    ],
+                    'monthly' => [
+                        'categories' => $monthLabels,
+                        'series' => $monthlySeries
+                    ]
+                ];
+
+                // ===== ORDER PAYMENT CHARTS =====
+                $paymentFields = [
+                    'Advance Paid' => 'advance_paid',
+                    'Remaining' => 'remaining_amount',
+                    'Discount' => 'discount',
+                    'Payable Amount' => 'payable_amount',
+                    'Total Amount' => 'payable_amount'
+                ];
+
+                // DAILY PAYMENT
+                $dailyPaymentLabels = $dailyLabels;
+                $dailyPaymentSeries = [];
+                foreach ($paymentFields as $label => $field) {
+                    $data = $dailyPaymentLabels->map(function ($date) use ($field) {
+                        return DB::table('orders')
+                            ->whereDate('created_at', $date)
+                            ->sum($field);
+                    });
+                    $dailyPaymentSeries[] = ['name' => $label, 'data' => $data];
+                }
+
+                // WEEKLY PAYMENT
+                $weeklyPaymentSeries = [];
+                foreach ($paymentFields as $label => $field) {
+                    $data = collect([0, 1, 2])->map(function ($i) use ($field) {
+                        $start = Carbon::now()->startOfWeek()->subWeeks($i);
+                        $end = $start->copy()->endOfWeek();
+                        return DB::table('orders')
+                            ->whereBetween('created_at', [$start, $end])
+                            ->sum($field);
+                    });
+                    $weeklyPaymentSeries[] = ['name' => $label, 'data' => $data->reverse()->values()];
+                }
+
+                // MONTHLY PAYMENT
+                $monthlyPaymentSeries = [];
+                foreach ($paymentFields as $label => $field) {
+                    $data = collect($months)->map(function ($month) use ($field) {
+                        return DB::table('orders')
+                            ->whereMonth('created_at', $month)
+                            ->whereYear('created_at', Carbon::now()->year)
+                            ->sum($field);
+                    });
+                    $monthlyPaymentSeries[] = ['name' => $label, 'data' => $data];
+                }
+
+                $paymentChartStats = [
+                    'daily' => [
+                        'categories' => $dailyPaymentLabels,
+                        'series' => $dailyPaymentSeries
+                    ],
+                    'weekly' => [
+                        'categories' => $weeklyLabels,
+                        'series' => $weeklyPaymentSeries
+                    ],
+                    'monthly' => [
+                        'categories' => $monthLabels,
+                        'series' => $monthlyPaymentSeries
+                    ]
+                ];
+
+                return view('admin_panel.admin_dashboard', compact(
+                    'totalOrderAmount',
+                    'paidAmount',
+                    'remainingAmount',
+                    'pendingEstimated',
+                    'deliveredOrders',
+                    'pendingOrders',
+                    'confirmedOrders',
+                    'preparingOrders',
+                    'cancelledOrders',
+                    'totalEstimates',
+                    'orderChartStats',
+                    'paymentChartStats',// ✅ Pass this to Blade
+                    'Categories',
+                    'Brands',
+                    'Products',
+                    'TotalPurchaseAmount',
+                    'TotalPurchaseReturn',
+                    'TotalClaimReturn',
+                ));
             }
+
             if ($usertype == 'Accountant') {
                 // Fetch all categories for the dropdown
                 $accountant = Auth::user();

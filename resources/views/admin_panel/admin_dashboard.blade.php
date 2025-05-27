@@ -62,7 +62,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <h6 class="mb-1 text-white">Total Order Amount</h6>
-                                        <h3 class="fw-bold mb-0 text-white">Rs. 500,000</h3>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. {{ number_format($totalOrderAmount) }}</h3>
                                     </div>
                                     <div class="icon bg-white text-primary rounded-circle p-3">
                                         <i class="fas fa-file-invoice-dollar fs-4"></i>
@@ -79,7 +79,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <h6 class="mb-1 text-white">Paid Amount</h6>
-                                        <h3 class="fw-bold mb-0 text-white">Rs. 350,000</h3>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. {{ number_format($paidAmount) }}</h3>
                                     </div>
                                     <div class="icon bg-white text-success rounded-circle p-3">
                                         <i class="fas fa-hand-holding-usd fs-4"></i>
@@ -96,7 +96,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <h6 class="mb-1 text-white">Remaining Amount</h6>
-                                        <h3 class="fw-bold mb-0 text-white">Rs. 150,000</h3>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. {{ number_format($remainingAmount) }}</h3>
                                     </div>
                                     <div class="icon bg-white text-warning rounded-circle p-3">
                                         <i class="fas fa-wallet fs-4"></i>
@@ -112,7 +112,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <h6 class="mb-1 text-white">Pending Estimated</h6>
-                                        <h3 class="fw-bold mb-0 text-white">Rs. 600,000</h3>
+                                        <h3 class="fw-bold mb-0 text-white">Rs. {{ number_format($pendingEstimated) }}</h3>
                                     </div>
                                     <div class="icon bg-white text-info rounded-circle p-3">
                                         <i class="fas fa-chart-line fs-4"></i>
@@ -135,7 +135,7 @@
                             <div class="card-body">
                                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
                                 <h6 class="fw-bold">Delivered</h6>
-                                <p class="fs-5 fw-semibold">120</p>
+                                <p class="fs-5 fw-semibold">{{ $deliveredOrders }}</p>
                             </div>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                             <div class="card-body">
                                 <i class="fas fa-clock fa-2x text-warning mb-2"></i>
                                 <h6 class="fw-bold">Pending</h6>
-                                <p class="fs-5 fw-semibold">80</p>
+                                <p class="fs-5 fw-semibold">{{ $pendingOrders }}</p>
                             </div>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
                             <div class="card-body">
                                 <i class="fas fa-check-double fa-2x text-primary mb-2"></i>
                                 <h6 class="fw-bold">Confirmed</h6>
-                                <p class="fs-5 fw-semibold">60</p>
+                                <p class="fs-5 fw-semibold">{{ $confirmedOrders }}</p>
                             </div>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
                             <div class="card-body">
                                 <i class="fas fa-utensils fa-2x text-info mb-2"></i>
                                 <h6 class="fw-bold">Preparing</h6>
-                                <p class="fs-5 fw-semibold">45</p>
+                                <p class="fs-5 fw-semibold">{{ $preparingOrders }}</p>
                             </div>
                         </div>
                     </div>
@@ -179,7 +179,7 @@
                             <div class="card-body">
                                 <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
                                 <h6 class="fw-bold">Cancelled</h6>
-                                <p class="fs-5 fw-semibold">20</p>
+                                <p class="fs-5 fw-semibold">{{ $cancelledOrders }}</p>
                             </div>
                         </div>
                     </div>
@@ -189,7 +189,7 @@
                             <div class="card-body">
                                 <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
                                 <h6 class="fw-bold">Total Estimates</h6>
-                                <p class="fs-5 fw-semibold">85</p> {{-- Replace 85 with your dynamic count if needed --}}
+                                <p class="fs-5 fw-semibold">{{ $totalEstimates }}</p> {{-- Replace 85 with your dynamic count if needed --}}
                             </div>
                         </div>
                     </div>
@@ -209,23 +209,19 @@
                     </select>
                 </div>
 
-                <div id="orderStatusChart" style="height: 400px;" class="bg-white"></div>
+                <div id="orderStatusChart" style="height: 400px;" class="bg-white rounded shadow-sm"></div>
 
                 <div class="mt-5 mb-3">
                     <h4 class="fw-bold">🚚 Orders Payment</h4>
                     <hr>
                 </div>
-                <div class="mb-3">
-                    <label for="paymentFilter" class="form-label fw-bold">Filter By:</label>
-                    <select id="paymentFilter" class="form-select" style="max-width: 200px;">
-                        <option value="daily" selected>Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                    </select>
-                </div>
+                <select id="paymentFilter" class="form-select w-auto mb-3">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
 
-                <!-- Chart Container -->
-                <div id="paymentStatusChart" class="bg-white"></div>
+                <div id="paymentStatusChart"></div>
 
                 <div class="mt-5 mb-3">
                     <h4 class="fw-bold">🚚 Purchase Status</h4>
@@ -239,7 +235,7 @@
                             <div class="card text-white bg-primary">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Categories</h5>
-                                    <p class="card-text display-6" id="totalCategories">0</p>
+                                    <p class="card-text display-6" id="totalCategories">{{ $Categories}} </p>
                                 </div>
                             </div>
                         </div>
@@ -247,7 +243,7 @@
                             <div class="card text-white bg-success">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Brands</h5>
-                                    <p class="card-text display-6" id="totalBrands">0</p>
+                                    <p class="card-text display-6" id="totalBrands">{{ $Brands}} </p>
                                 </div>
                             </div>
                         </div>
@@ -255,7 +251,7 @@
                             <div class="card text-white bg-warning">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Products</h5>
-                                    <p class="card-text display-6" id="totalProducts">0</p>
+                                    <p class="card-text display-6" id="totalProducts">{{ $Products}} </p>
                                 </div>
                             </div>
                         </div>
@@ -267,7 +263,7 @@
                             <div class="card text-white bg-info">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Purchase Amount</h5>
-                                    <p class="card-text display-6" id="totalPurchaseAmount">PKR 0</p>
+                                    <p class="card-text display-6" id="totalPurchaseAmount">PKR {{ $TotalPurchaseAmount }}</p>
                                 </div>
                             </div>
                         </div>
@@ -275,7 +271,7 @@
                             <div class="card text-white bg-danger">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Purchase Return Amount</h5>
-                                    <p class="card-text display-6" id="totalPurchaseReturnAmount">PKR 0</p>
+                                    <p class="card-text display-6" id="totalPurchaseReturnAmount">PKR {{ $TotalPurchaseReturn }}</p>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +279,7 @@
                             <div class="card text-white bg-secondary">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Claim Return Amount</h5>
-                                    <p class="card-text display-6" id="totalClaimReturnAmount">PKR 0</p>
+                                    <p class="card-text display-6" id="totalClaimReturnAmount">PKR {{ $TotalClaimReturn }}</p>
                                 </div>
                             </div>
                         </div>
@@ -297,72 +293,10 @@
     @include('admin_panel.include.footer_include')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        // Static dummy data filled in for demonstration
-        const orderStats = {
-            daily: {
-                categories: ['2025-03-07', '2025-03-08', '2025-03-09', '2025-03-10'],
-                series: [{
-                        name: 'Delivered',
-                        data: [2, 4, 1, 3]
-                    },
-                    {
-                        name: 'Pending',
-                        data: [1, 3, 2, 4]
-                    },
-                    {
-                        name: 'Preparing',
-                        data: [0, 2, 3, 1]
-                    },
-                    {
-                        name: 'Canceled',
-                        data: [1, 0, 2, 1]
-                    }
-                ]
-            },
-            weekly: {
-                categories: ['Week 1 of March', 'Week 2 of March', 'Week 3 of March'],
-                series: [{
-                        name: 'Delivered',
-                        data: [7, 10, 5]
-                    },
-                    {
-                        name: 'Pending',
-                        data: [3, 5, 2]
-                    },
-                    {
-                        name: 'Preparing',
-                        data: [4, 6, 3]
-                    },
-                    {
-                        name: 'Canceled',
-                        data: [2, 1, 3]
-                    }
-                ]
-            },
-            monthly: {
-                categories: ['January 2025', 'February 2025', 'March 2025'],
-                series: [{
-                        name: 'Delivered',
-                        data: [25, 30, 40]
-                    },
-                    {
-                        name: 'Pending',
-                        data: [10, 15, 20]
-                    },
-                    {
-                        name: 'Preparing',
-                        data: [8, 12, 18]
-                    },
-                    {
-                        name: 'Canceled',
-                        data: [5, 7, 6]
-                    }
-                ]
-            }
-        };
-
-        // Chart config
-        const options = {
+        const orderStats = @json($orderChartStats);
+    </script>
+    <script>
+        const chartOptions = {
             chart: {
                 type: 'bar',
                 height: 400,
@@ -382,7 +316,7 @@
                     endingShape: 'rounded'
                 }
             },
-            colors: ['#4CAF50', '#FFC107', '#17A2B8', '#DC3545'],
+            colors: ['#4CAF50', '#FFC107', '#17A2B8', '#DC3545', '#6f42c1'],
             dataLabels: {
                 enabled: false
             },
@@ -393,7 +327,7 @@
             },
             series: orderStats.daily.series,
             xaxis: {
-                categories: orderStats.daily.categories,
+                categories: orderStats.daily.categories
             },
             fill: {
                 opacity: 1
@@ -403,10 +337,9 @@
             },
         };
 
-        const chart = new ApexCharts(document.querySelector("#orderStatusChart"), options);
+        const chart = new ApexCharts(document.querySelector("#orderStatusChart"), chartOptions);
         chart.render();
 
-        // Filter change handler
         document.getElementById('orderFilter').addEventListener('change', function() {
             const selected = this.value;
             chart.updateOptions({
@@ -418,82 +351,8 @@
         });
     </script>
 
-
     <script>
-        const paymentStats = {
-            daily: {
-                categories: ['ORD001', 'ORD002', 'ORD003'],
-                series: [{
-                        name: 'Advance Paid',
-                        data: [500, 700, 400]
-                    },
-                    {
-                        name: 'Remaining',
-                        data: [1000, 300, 600]
-                    },
-                    {
-                        name: 'Discount',
-                        data: [100, 50, 80]
-                    },
-                    {
-                        name: 'Payable Amount',
-                        data: [1400, 1100, 1000]
-                    },
-                    {
-                        name: 'Total Amount',
-                        data: [1500, 1150, 1080]
-                    }
-                ]
-            },
-            weekly: {
-                categories: ['Week 1', 'Week 2', 'Week 3'],
-                series: [{
-                        name: 'Advance Paid',
-                        data: [1200, 800, 900]
-                    },
-                    {
-                        name: 'Remaining',
-                        data: [400, 700, 600]
-                    },
-                    {
-                        name: 'Discount',
-                        data: [100, 120, 90]
-                    },
-                    {
-                        name: 'Payable Amount',
-                        data: [1600, 1500, 1400]
-                    },
-                    {
-                        name: 'Total Amount',
-                        data: [1700, 1620, 1490]
-                    }
-                ]
-            },
-            monthly: {
-                categories: ['March 2025', 'April 2025'],
-                series: [{
-                        name: 'Advance Paid',
-                        data: [2000, 1800]
-                    },
-                    {
-                        name: 'Remaining',
-                        data: [1000, 1200]
-                    },
-                    {
-                        name: 'Discount',
-                        data: [150, 200]
-                    },
-                    {
-                        name: 'Payable Amount',
-                        data: [2800, 2800]
-                    },
-                    {
-                        name: 'Total Amount',
-                        data: [2950, 3000]
-                    }
-                ]
-            }
-        };
+        const paymentStats = @json($paymentChartStats);
 
         const paymentChartOptions = {
             chart: {
@@ -570,7 +429,6 @@
         const paymentChart = new ApexCharts(document.querySelector("#paymentStatusChart"), paymentChartOptions);
         paymentChart.render();
 
-        // Filter change
         document.getElementById('paymentFilter').addEventListener('change', function() {
             const selected = this.value;
             paymentChart.updateOptions({
@@ -581,6 +439,7 @@
             });
         });
     </script>
+
 
 
 
