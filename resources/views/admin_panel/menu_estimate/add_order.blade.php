@@ -104,7 +104,7 @@
                                             <div class="form-group">
                                                 <label>Venue</label>
                                                 <input type="text" name="Venue" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
 
@@ -112,7 +112,7 @@
                                             <div class="form-group">
                                                 <label>No Of Guest</label>
                                                 <input type="number" name="person_program" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
                                         <!-- Event Type -->
@@ -120,32 +120,32 @@
                                             <div class="form-group">
                                                 <label>Event Type</label>
                                                 <input type="text" name="event_type" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
                                         <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
                                                 <label>Service Type </label>
-                                                <select name="food_type" id="food_type" class="form-control bg--white" >
+                                                <select name="food_type" id="food_type" class="form-control bg--white">
                                                     <option value="Buffy">Buffy</option>
                                                     <option value="Table">Table</option>
                                                 </select>
                                             </div>
                                         </div>
 
-                                         <div class="col-xl-4 col-sm-6">
+                                        <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
                                                 <label>Mobile Number</label>
                                                 <input type="number" name="mobile_number" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
 
-                                         <div class="col-xl-4 col-sm-6">
+                                        <div class="col-xl-4 col-sm-6">
                                             <div class="form-group">
                                                 <label>Reference Name</label>
                                                 <input type="text" name="reference_name" class="form-control bg--white" required>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -176,13 +176,26 @@
                                     <div class="row">
                                         <div class="col-md-8 col-sm-6">
                                         </div>
-
                                         <div class="col-md-4 col-sm-6">
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
                                                         <label>Total Price</label>
                                                         <input type="text" id="total_price" name="total_price" class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                                {{-- NEW: Discount Field --}}
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Discount (Rs)</label>
+                                                        <input type="number" id="discount" name="discount" class="form-control" value="0" min="0">
+                                                    </div>
+                                                </div>
+                                                {{-- NEW: Net Amount Field --}}
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Net Amount</label>
+                                                        <input type="text" id="net_amount" name="net_amount" class="form-control" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -201,7 +214,6 @@
 
     </div>
     @include('admin_panel.include.footer_include')
-
 
     <script>
         $(document).ready(function() {
@@ -251,7 +263,6 @@
                 }
             });
 
-
             // Item select hone par unit aur price set karna
             $(document).on('change', '.item-name', function() {
                 var selectedOption = $(this).find(":selected");
@@ -261,6 +272,8 @@
                 var row = $(this).closest('tr');
                 row.find('.unit').val(unit);
                 row.find('.price').val(price);
+                // Trigger calculation when item price changes
+                calculateTotal(row);
             });
 
             $(document).on('input', '.quantity, .price', function() {
@@ -276,11 +289,11 @@
 
                 row.find('.total').val(total.toFixed(2));
 
-                calculateTotalPrice();
+                calculateAllTotals(); // Call new function to calculate all totals
             }
 
-            // Function to calculate total price and payable amount
-            function calculateTotalPrice() {
+            // --- MODIFIED: Function to calculate total price, discount, and net amount ---
+            function calculateAllTotals() {
                 var totalPrice = 0;
 
                 $('.total').each(function() {
@@ -289,26 +302,37 @@
 
                 $('#total_price').val(totalPrice.toFixed(2));
 
+                // Get discount amount
                 var discount = parseFloat($('#discount').val()) || 0;
-                var payableAmount = totalPrice - discount;
-                $('#payable_amount').val(payableAmount.toFixed(2));
+
+                // Calculate Net Amount
+                var netAmount = totalPrice - discount;
+
+                // Ensure net amount doesn't go below zero if discount is too high
+                if (netAmount < 0) {
+                    netAmount = 0;
+                }
+
+                $('#net_amount').val(netAmount.toFixed(2));
             }
+            // --- END MODIFIED ---
 
             // Discount change hone par payable amount update karna
             $(document).on('input', '#discount', function() {
-                calculateTotalPrice();
+                calculateAllTotals(); // Now calls the new combined function
             });
 
             // Row delete hone par bhi total update hoga
             $('#purchaseItems').on('click', '.remove-row', function() {
                 $(this).closest('tr').remove();
-                calculateTotalPrice();
+                calculateAllTotals(); // Now calls the new combined function
             });
 
             // Add a new row
             $('#addRow').click(function() {
                 const newRow = createNewRow();
                 $('#purchaseItems').append(newRow);
+                calculateAllTotals(); // Recalculate totals after adding a new row
             });
 
             // Function to create a new row
@@ -342,11 +366,11 @@
                 </td>
             </tr>`;
             }
-            // Remove a row
-            $('#purchaseItems').on('click', '.remove-row', function() {
-                $(this).closest('tr').remove();
-                calculateTotalPrice();
-            });
+            // Remove a row (this was duplicated, keeping one)
+            // $('#purchaseItems').on('click', '.remove-row', function() {
+            //     $(this).closest('tr').remove();
+            //     calculateAllTotals(); // Ensure this calls the correct function
+            // });
 
             // Search product functionality
             $('#productSearch').on('keyup', function() {
@@ -373,8 +397,8 @@
                 const searchResults = $('#searchResults');
                 searchResults.html('');
                 products.forEach(product => {
-                    const listItem = `<li class="list-group-item search-result-item" data-category="${product.category}" data-product-name="${product.product_name}" data-price="${product.retail_price}">
-                    ${product.category} - ${product.product_name} - ${product.retail_price}
+                    const listItem = `<li class="list-group-item search-result-item" data-category="${product.category_id}" data-subcategory="${product.subcategory_id}" data-product-name="${product.name}" data-unit="${product.unit}" data-price="${product.price}">
+                ${product.name} (${product.category_name} - ${product.subcategory_name}) - Rs. ${product.price}
                 </li>`;
                     searchResults.append(listItem);
                 });
@@ -382,15 +406,37 @@
 
             // Add searched product as a new row
             $('#searchResults').on('click', '.search-result-item', function() {
-                const category = $(this).data('category');
+                const category_id = $(this).data('category');
+                const subcategory_id = $(this).data('subcategory'); // Get subcategory ID
                 const productName = $(this).data('product-name');
+                const unit = $(this).data('unit');
                 const price = $(this).data('price');
 
-                const newRow = createNewRow(category, productName, price);
+                // Create a new row
+                const newRowHtml = createNewRow(category_id, subcategory_id, productName, unit, price);
+                const newRow = $(newRowHtml);
                 $('#purchaseItems').append(newRow);
-                $('#searchResults').html('');
-                calculateTotalPrice();
+
+                // Set selected values for the newly added row
+                newRow.find('.item-category').val(category_id).trigger('change'); // Trigger change to load subcategories
+                // Wait for subcategories to load before setting subcategory and item
+                setTimeout(() => {
+                    newRow.find('.item-subcategory').val(subcategory_id).trigger('change'); // Trigger change to load items
+                    setTimeout(() => {
+                        newRow.find('.item-name').val(productName);
+                        newRow.find('.unit').val(unit);
+                        newRow.find('.price').val(price);
+                        calculateTotal(newRow); // Calculate total for the new row
+                    }, 200); // Small delay to ensure items are loaded
+                }, 200); // Small delay to ensure subcategories are loaded
+
+                $('#searchResults').html(''); // Clear search results
+
+                calculateAllTotals(); // Recalculate all totals including the new row
             });
+
+            // Initial calculation when the page loads (useful if there are pre-filled rows)
+            calculateAllTotals();
         });
     </script>
 

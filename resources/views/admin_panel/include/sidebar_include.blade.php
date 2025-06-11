@@ -628,15 +628,34 @@
                     <div class="sidebar-submenu ">
                         <ul>
                             <li class="sidebar-menu-item ">
-                                <a href="{{ route('sale-report') }}"
+                                <a href="{{ route('customer-report') }}"
                                     class="nav-link">
                                     <i class="menu-icon la la-dot-circle"></i>
-                                    <span class="menu-title">Sales Report</span>
+                                    <span class="menu-title">Customer Report</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item ">
+                                <a href="{{ route('vendor-report') }}"
+                                    class="nav-link">
+                                    <i class="menu-icon la la-dot-circle"></i>
+                                    <span class="menu-title">Vendor Ledger Report</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item ">
+                                <a href="{{ route('order-report') }}"
+                                    class="nav-link">
+                                    <i class="menu-icon la la-dot-circle"></i>
+                                    <span class="menu-title">Order Report</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item ">
+                                <a href="{{ route('Estimated-report') }}"
+                                    class="nav-link">
+                                    <i class="menu-icon la la-dot-circle"></i>
+                                    <span class="menu-title">Estimated Report</span>
                                 </a>
                             </li>
 
-                        </ul>
-                        <ul>
                             <li class="sidebar-menu-item ">
                                 <a href="{{ route('purchase-report') }}"
                                     class="nav-link">
@@ -644,12 +663,9 @@
                                     <span class="menu-title"> Purchase Report </span>
                                 </a>
                             </li>
-
                         </ul>
                     </div>
                 </li>
-
-
             </ul>
             @endif
 

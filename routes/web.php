@@ -255,11 +255,21 @@ Route::post('/assign-order-to-vendor', [OrderController::class, 'assignOrderItem
 Route::get('/vendor-orders-asigned', [OrderController::class, 'vendor_orders_asigned'])->name('vendor-orders-asigned');
 Route::post('/vendor-ledger-store', [OrderController::class, 'storevendorledger'])->name('vendor.ledger.store');
 
-Route::get('/sale-report', [ReportController::class, 'sale_report'])->name('sale-report');
-Route::get('/filter-sales', [ReportController::class, 'filterSales'])->name('filter.sales');
+
+Route::get('/customer-report', [ReportController::class, 'customer_report'])->name('customer-report');
+Route::get('/admin/customer-report-data/{id}', [ReportController::class, 'getCustomerReportData'])->name('admin.customer.report.data');
+
+Route::get('/vendor-report', [ReportController::class, 'vendor_report'])->name('vendor-report');
+Route::post('/admin/vendor-report', [ReportController::class, 'getVendorReport'])->name('admin.vendor.report');
+
+Route::get('/order-report', [ReportController::class, 'order_report'])->name('order-report');
+Route::get('/filter-order-report', [ReportController::class, 'filter_order_report'])->name('filter-order-report');
 
 Route::get('/purchase-report', [ReportController::class, 'purchase_report'])->name('purchase-report');
 Route::get('/filter-purchase', [ReportController::class, 'filterpurchase'])->name('filter.purchase');
+
+Route::get('/Estimated-report', [ReportController::class, 'Estimated_report'])->name('Estimated-report');
+Route::get('/filter-Estimated-report', [ReportController::class, 'filter_Estimated_report'])->name('filter-Estimated-report');
 
 
 Route::prefix('kitchen')->group(function () {

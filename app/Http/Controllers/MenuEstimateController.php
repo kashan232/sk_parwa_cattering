@@ -47,11 +47,10 @@ class MenuEstimateController extends Controller
     {
         if (Auth::id()) {
             $userId = Auth::id();
-
             // Total price aur payable amount calculate karna
             $totalPrice = $request->input('total_price', 0);
             $discount = $request->input('discount', 0);
-            $payableAmount = $totalPrice - $discount;
+            $netamount = $totalPrice - $discount;
 
             // Order ka array prepare karna
             $orderData = [
@@ -72,7 +71,9 @@ class MenuEstimateController extends Controller
                 'quantity' => json_encode($request->input('quantity', [])),
                 'price' => json_encode($request->input('price', [])),
                 'total' => json_encode($request->input('total', [])),
-                'total_price' => $totalPrice,
+                'total_price' => $request->input('total_price'),
+                'discount' => $request->input('discount'),
+                'net_amount' => $request->input('net_amount')
             ];
 
             // Order create karna
